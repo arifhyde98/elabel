@@ -77,7 +77,11 @@ class SertifikatController extends BaseController
         }
 
         $payload['box_id'] = $this->resolveSertifikatBoxId($payload['lokasi'] ?? null);
-        $payload['pdf_path'] = $this->storeUploadedPdf($this->request->getFile('pdf'));
+        try {
+            $payload['pdf_path'] = $this->storeUploadedPdf($this->request->getFile('pdf'), $payload);
+        } catch (\Throwable $exception) {
+            return redirect()->back()->withInput()->with('error', $this->uploadPdfErrorMessage($exception));
+        }
         $newId = $this->sertifikat->insert($payload);
         $this->logActivity('create', 'Sertipikat Tanah', 'Menambahkan sertipikat ' . ($payload['no_sertipikat'] ?? '-') . '.', 'sertifikat_tanah', (int) $newId);
 
@@ -129,7 +133,11 @@ class SertifikatController extends BaseController
         }
 
         $payload['box_id'] = $this->resolveSertifikatBoxId($payload['lokasi'] ?? null, $id, isset($item['box_id']) ? (int) $item['box_id'] : null);
-        $payload['pdf_path'] = $this->replaceUploadedPdf($this->request->getFile('pdf'), (string) ($item['pdf_path'] ?? ''));
+        try {
+            $payload['pdf_path'] = $this->replaceUploadedPdf($this->request->getFile('pdf'), (string) ($item['pdf_path'] ?? ''), $payload);
+        } catch (\Throwable $exception) {
+            return redirect()->back()->withInput()->with('error', $this->uploadPdfErrorMessage($exception));
+        }
         $this->sertifikat->update($id, $payload);
         $this->logActivity('update', 'Sertipikat Tanah', 'Mengubah sertipikat ' . ($payload['no_sertipikat'] ?? '-') . '.', 'sertifikat_tanah', $id);
 
@@ -505,7 +513,7 @@ class SertifikatController extends BaseController
         ];
     }
 
-    private function storeUploadedPdf($file): ?string
+    private function storeUploadedPdf($file, array $data): ?string
     {
         if (! $file || ! $file->isValid() || $file->hasMoved()) {
             return null;
@@ -516,19 +524,25 @@ class SertifikatController extends BaseController
             mkdir($uploadPath, 0755, true);
         }
 
-        $newName = $file->getRandomName();
+        $extension = strtolower((string) $file->getExtension());
+        if ($extension === '') {
+            $extension = 'pdf';
+        }
+
+        $baseName = $this->sertifikatPdfBaseName($data);
+        $newName = $this->uniqueUploadFilename($uploadPath, $baseName, $extension);
         $file->move($uploadPath, $newName);
 
         return 'uploads/sertifikat/' . $newName;
     }
 
-    private function replaceUploadedPdf($file, string $oldPath): ?string
+    private function replaceUploadedPdf($file, string $oldPath, array $data): ?string
     {
         if (! $file || ! $file->isValid() || $file->hasMoved()) {
             return $oldPath !== '' ? $oldPath : null;
         }
 
-        $newPath = $this->storeUploadedPdf($file);
+        $newPath = $this->storeUploadedPdf($file, $data);
         if ($oldPath !== '' && $newPath !== null) {
             $absoluteOldPath = WRITEPATH . $oldPath;
             if (is_file($absoluteOldPath)) {
@@ -537,6 +551,51 @@ class SertifikatController extends BaseController
         }
 
         return $newPath;
+    }
+
+    private function uploadPdfErrorMessage(\Throwable $exception): string
+    {
+        $message = 'Dokumen PDF sertipikat gagal diupload. Periksa permission folder writable/uploads/sertifikat.';
+        if (strtolower((string) ENVIRONMENT) === 'development') {
+            $message .= ' Detail: ' . $exception->getMessage();
+        }
+
+        return $message;
+    }
+
+    private function sertifikatPdfBaseName(array $data): string
+    {
+        $parts = [
+            $this->filenameToken((string) ($data['no_sertipikat'] ?? '')),
+            $this->filenameToken((string) ($data['status_penggunaan'] ?? '')),
+        ];
+
+        $parts = array_values(array_filter($parts, static fn (string $part): bool => $part !== ''));
+
+        return $parts !== [] ? implode('_', $parts) : 'sertifikat';
+    }
+
+    private function filenameToken(string $value): string
+    {
+        $value = trim($value);
+        $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value) ?: $value;
+        $value = preg_replace('/[^A-Za-z0-9]+/', '-', $value) ?? '';
+        $value = trim($value, '-');
+
+        return substr($value, 0, 80);
+    }
+
+    private function uniqueUploadFilename(string $uploadPath, string $baseName, string $extension): string
+    {
+        $filename = $baseName . '.' . $extension;
+        $counter = 2;
+
+        while (is_file($uploadPath . DIRECTORY_SEPARATOR . $filename)) {
+            $filename = $baseName . '-' . $counter . '.' . $extension;
+            $counter++;
+        }
+
+        return $filename;
     }
 
     private function normalizeSertifikatIdentity(array $data): array
