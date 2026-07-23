@@ -501,7 +501,7 @@ class SertifikatController extends BaseController
             'alamat'            => 'permit_empty|max_length[255]',
             'lokasi'            => 'permit_empty|max_length[255]',
             'dinas'             => 'permit_empty|max_length[150]',
-            'pdf'               => 'if_exist|max_size[pdf,5120]|ext_in[pdf,pdf]',
+            'pdf'               => 'if_exist|max_size[pdf,51200]|ext_in[pdf,pdf]',
         ];
     }
 

@@ -2,6 +2,25 @@
 Options -Indexes
 
 # ----------------------------------------------------------------------
+# Upload size limits (allow up to 50MB uploads)
+# ----------------------------------------------------------------------
+<IfModule mod_php.c>
+	php_value upload_max_filesize 50M
+	php_value post_max_size 64M
+	php_value max_execution_time 300
+</IfModule>
+<IfModule mod_php7.c>
+	php_value upload_max_filesize 50M
+	php_value post_max_size 64M
+	php_value max_execution_time 300
+</IfModule>
+<IfModule mod_php8.c>
+	php_value upload_max_filesize 50M
+	php_value post_max_size 64M
+	php_value max_execution_time 300
+</IfModule>
+
+# ----------------------------------------------------------------------
 # Rewrite engine
 # ----------------------------------------------------------------------
 
