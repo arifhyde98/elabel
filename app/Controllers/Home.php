@@ -23,7 +23,10 @@ class Home extends BaseController
                 ->select('bpkb.*, boxes.box_code, boxes.location')
                 ->join('boxes', 'boxes.id = bpkb.box_id', 'left')
                 ->where('bpkb.status !=', 'Dihapus')
-                ->like('bpkb.plate_number', $query)
+                ->groupStart()
+                    ->like('bpkb.plate_number', $query)
+                    ->orLike('bpkb.nibar', $query)
+                ->groupEnd()
                 ->orderBy('bpkb.year', 'desc')
                 ->orderBy('bpkb.plate_number', 'asc')
                 ->findAll(20);

@@ -49,6 +49,7 @@ class BpkbController extends BaseController
             $builder->groupStart()
                 ->like('bpkb.plate_number', $query)
                 ->orLike('bpkb.no_bpkb', $query)
+                ->orLike('bpkb.nibar', $query)
                 ->orLike('bpkb.no_rangka', $query)
                 ->orLike('bpkb.no_mesin', $query)
                 ->orLike('bpkb.merek', $query)
@@ -173,6 +174,7 @@ class BpkbController extends BaseController
             'vehicle_type' => 'required|in_list[R4,R2]',
             'plate_number' => 'required|max_length[20]',
             'no_bpkb'      => 'permit_empty|max_length[50]',
+            'nibar'        => 'permit_empty|max_length[100]',
             'no_rangka'    => 'permit_empty|max_length[50]',
             'no_mesin'     => 'permit_empty|max_length[50]',
             'merek'        => 'permit_empty|max_length[100]',
@@ -192,6 +194,7 @@ class BpkbController extends BaseController
         $identity = $this->normalizeBpkbIdentity([
             'plate_number' => (string) $this->request->getPost('plate_number'),
             'no_bpkb'      => (string) $this->request->getPost('no_bpkb'),
+            'nibar'        => (string) $this->request->getPost('nibar'),
             'no_rangka'    => (string) $this->request->getPost('no_rangka'),
             'no_mesin'     => (string) $this->request->getPost('no_mesin'),
         ]);
@@ -233,6 +236,7 @@ class BpkbController extends BaseController
             'vehicle_type' => $vehicleType ?? 'R4',
             'plate_number' => $identity['plate_number'],
             'no_bpkb'      => $identity['no_bpkb'],
+            'nibar'        => $identity['nibar'],
             'no_rangka'    => $identity['no_rangka'],
             'no_mesin'     => $identity['no_mesin'],
             'merek'        => $this->normalizeTextField((string) $this->request->getPost('merek')),
@@ -261,6 +265,7 @@ class BpkbController extends BaseController
             'vehicle_type' => 'required|in_list[R4,R2]',
             'plate_number' => 'required|max_length[20]',
             'no_bpkb'      => 'permit_empty|max_length[50]',
+            'nibar'        => 'permit_empty|max_length[100]',
             'no_rangka'    => 'permit_empty|max_length[50]',
             'no_mesin'     => 'permit_empty|max_length[50]',
             'merek'        => 'permit_empty|max_length[100]',
@@ -280,6 +285,7 @@ class BpkbController extends BaseController
         $identity = $this->normalizeBpkbIdentity([
             'plate_number' => (string) $this->request->getPost('plate_number'),
             'no_bpkb'      => (string) $this->request->getPost('no_bpkb'),
+            'nibar'        => (string) $this->request->getPost('nibar'),
             'no_rangka'    => (string) $this->request->getPost('no_rangka'),
             'no_mesin'     => (string) $this->request->getPost('no_mesin'),
         ]);
@@ -324,6 +330,7 @@ class BpkbController extends BaseController
             'vehicle_type' => $vehicleType ?? 'R4',
             'plate_number' => $identity['plate_number'],
             'no_bpkb'      => $identity['no_bpkb'],
+            'nibar'        => $identity['nibar'],
             'no_rangka'    => $identity['no_rangka'],
             'no_mesin'     => $identity['no_mesin'],
             'merek'        => $this->normalizeTextField((string) $this->request->getPost('merek')),
@@ -430,6 +437,7 @@ class BpkbController extends BaseController
             $identity = $this->normalizeBpkbIdentity([
                 'plate_number' => $row['plate_number'],
                 'no_bpkb'      => $row['no_bpkb'],
+                'nibar'        => $row['nibar'],
                 'no_rangka'    => $row['no_rangka'],
                 'no_mesin'     => $row['no_mesin'],
             ]);
@@ -469,6 +477,7 @@ class BpkbController extends BaseController
                 'vehicle_type' => $vehicleType,
                 'plate_number' => $plateNumber,
                 'no_bpkb'      => $identity['no_bpkb'],
+                'nibar'        => $identity['nibar'],
                 'no_rangka'    => $identity['no_rangka'],
                 'no_mesin'     => $identity['no_mesin'],
                 'merek'        => $this->normalizeTextField($row['merek']),
@@ -516,11 +525,11 @@ class BpkbController extends BaseController
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Import BPKB');
         $sheet->fromArray([
-            ['No', 'No. Polisi', 'No. BPKB', 'No. Rangka', 'No. Mesin', 'Merek', 'Tipe', 'Isi Silinder', 'Warna', 'Pengguna', 'Tahun', 'Jenis'],
-            [1, 'DN 1234 AB', 'BPKB001', 'RANGKA001', 'MESIN001', 'Toyota', 'Avanza', '1500 CC', 'Hitam', 'Sekretariat', '2024', $vehicleType ?? 'R4'],
+            ['No', 'No. Polisi', 'No. BPKB', 'Nibar', 'No. Rangka', 'No. Mesin', 'Merek', 'Tipe', 'Isi Silinder', 'Warna', 'Pengguna', 'Tahun', 'Jenis'],
+            [1, 'DN 1234 AB', 'BPKB001', 'NIBAR001', 'RANGKA001', 'MESIN001', 'Toyota', 'Avanza', '1500 CC', 'Hitam', 'Sekretariat', '2024', $vehicleType ?? 'R4'],
         ], null, 'A1');
 
-        foreach (range('A', 'L') as $column) {
+        foreach (range('A', 'M') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -547,7 +556,7 @@ class BpkbController extends BaseController
         $vehicleType = $this->normalizeVehicleType($type !== '' ? $type : null);
 
         $builder = $this->bpkb
-            ->select('bpkb.plate_number, bpkb.no_bpkb, bpkb.no_rangka, bpkb.no_mesin, bpkb.merek, bpkb.tipe, bpkb.isi_silinder, bpkb.warna, bpkb.pengguna, bpkb.year, bpkb.vehicle_type, bpkb.status, boxes.box_code')
+            ->select('bpkb.plate_number, bpkb.no_bpkb, bpkb.nibar, bpkb.no_rangka, bpkb.no_mesin, bpkb.merek, bpkb.tipe, bpkb.isi_silinder, bpkb.warna, bpkb.pengguna, bpkb.year, bpkb.vehicle_type, bpkb.status, boxes.box_code')
             ->join('boxes', 'boxes.id = bpkb.box_id')
             ->where('bpkb.status !=', 'Dihapus');
         if ($vehicleType !== null) {
@@ -564,7 +573,7 @@ class BpkbController extends BaseController
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Data BPKB');
-        $lastColumn = 'N';
+        $lastColumn = 'O';
         $headerRow = 3;
 
         $sheet->mergeCells('A1:' . $lastColumn . '1');
@@ -587,7 +596,7 @@ class BpkbController extends BaseController
         $sheet->getRowDimension(1)->setRowHeight(28);
 
         $sheet->fromArray([
-            ['No', 'No. Polisi', 'No. BPKB', 'No. Rangka', 'No. Mesin', 'Merek', 'Tipe', 'Isi Silinder', 'Warna', 'Pengguna', 'Tahun', 'Jenis', 'Box', 'Status'],
+            ['No', 'No. Polisi', 'No. BPKB', 'Nibar', 'No. Rangka', 'No. Mesin', 'Merek', 'Tipe', 'Isi Silinder', 'Warna', 'Pengguna', 'Tahun', 'Jenis', 'Box', 'Status'],
         ], null, 'A' . $headerRow);
 
         $rowIndex = $headerRow + 1;
@@ -598,6 +607,7 @@ class BpkbController extends BaseController
                     $i++,
                     $row['plate_number'] ?? '',
                     $row['no_bpkb'] ?? '',
+                    $row['nibar'] ?? '',
                     $row['no_rangka'] ?? '',
                     $row['no_mesin'] ?? '',
                     $row['merek'] ?? '',
@@ -649,25 +659,26 @@ class BpkbController extends BaseController
                 ->setVertical(Alignment::VERTICAL_TOP)
                 ->setWrapText(true);
             $sheet->getStyle('A4:A' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('K4:L' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('N4:N' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('L4:M' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('O4:O' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         }
 
         $widths = [
             'A' => 5,
             'B' => 13,
             'C' => 15,
-            'D' => 18,
+            'D' => 15,
             'E' => 18,
-            'F' => 13,
-            'G' => 14,
-            'H' => 12,
+            'F' => 18,
+            'G' => 13,
+            'H' => 14,
             'I' => 12,
-            'J' => 18,
-            'K' => 10,
-            'L' => 8,
-            'M' => 11,
+            'J' => 12,
+            'K' => 18,
+            'L' => 10,
+            'M' => 8,
             'N' => 11,
+            'O' => 11,
         ];
         foreach ($widths as $column => $width) {
             $sheet->getColumnDimension($column)->setWidth($width);
@@ -760,6 +771,7 @@ class BpkbController extends BaseController
             'vehicle_type'  => $item['vehicle_type'] ?? null,
             'plate_number'  => $item['plate_number'] ?? null,
             'no_bpkb'       => $item['no_bpkb'] ?? null,
+            'nibar'         => $item['nibar'] ?? null,
             'no_rangka'     => $item['no_rangka'] ?? null,
             'no_mesin'      => $item['no_mesin'] ?? null,
             'merek'         => $item['merek'] ?? null,
@@ -960,6 +972,7 @@ class BpkbController extends BaseController
             $parsedRows[$rowNumber] = [
                 'plate_number' => trim((string) $this->importCellValue($row, $headerMap, 'plate_number', $fallbackColumns['plate_number'])),
                 'no_bpkb'      => trim((string) $this->importCellValue($row, $headerMap, 'no_bpkb', $fallbackColumns['no_bpkb'])),
+                'nibar'        => trim((string) $this->importCellValue($row, $headerMap, 'nibar', $fallbackColumns['nibar'])),
                 'no_rangka'    => trim((string) $this->importCellValue($row, $headerMap, 'no_rangka', $fallbackColumns['no_rangka'])),
                 'no_mesin'     => trim((string) $this->importCellValue($row, $headerMap, 'no_mesin', $fallbackColumns['no_mesin'])),
                 'merek'        => trim((string) $this->importCellValue($row, $headerMap, 'merek', $fallbackColumns['merek'])),
@@ -992,6 +1005,10 @@ class BpkbController extends BaseController
             }
             if (in_array($normalizedHeader, ['no. bpkb', 'no bpkb', 'bpkb'], true)) {
                 $map['no_bpkb'] = $column;
+                continue;
+            }
+            if (in_array($normalizedHeader, ['nibar', 'nibar_key'], true)) {
+                $map['nibar'] = $column;
                 continue;
             }
             if (in_array($normalizedHeader, ['no. rangka', 'no rangka'], true)) {
@@ -1042,19 +1059,39 @@ class BpkbController extends BaseController
             || isset($headerMap['warna'])
             || isset($headerMap['pengguna']);
 
-        return [
-            'plate_number' => 'B',
-            'no_bpkb'      => 'C',
-            'no_rangka'    => 'D',
-            'no_mesin'     => 'E',
-            'merek'        => $usesExtendedLayout ? 'F' : null,
-            'tipe'         => $usesExtendedLayout ? 'G' : null,
-            'isi_silinder' => $usesExtendedLayout ? 'H' : null,
-            'warna'        => $usesExtendedLayout ? 'I' : null,
-            'pengguna'     => $usesExtendedLayout ? 'J' : null,
-            'year'         => $usesExtendedLayout ? 'K' : 'F',
-            'vehicle_type' => $usesExtendedLayout ? 'L' : 'G',
-        ];
+        $hasNibar = isset($headerMap['nibar']);
+
+        if ($hasNibar) {
+            return [
+                'plate_number' => 'B',
+                'no_bpkb'      => 'C',
+                'nibar'        => 'D',
+                'no_rangka'    => $usesExtendedLayout ? 'E' : 'D',
+                'no_mesin'     => $usesExtendedLayout ? 'F' : 'E',
+                'merek'        => $usesExtendedLayout ? 'G' : null,
+                'tipe'         => $usesExtendedLayout ? 'H' : null,
+                'isi_silinder' => $usesExtendedLayout ? 'I' : null,
+                'warna'        => $usesExtendedLayout ? 'J' : null,
+                'pengguna'     => $usesExtendedLayout ? 'K' : null,
+                'year'         => $usesExtendedLayout ? 'L' : 'F',
+                'vehicle_type' => $usesExtendedLayout ? 'M' : 'G',
+            ];
+        } else {
+            return [
+                'plate_number' => 'B',
+                'no_bpkb'      => 'C',
+                'nibar'        => null,
+                'no_rangka'    => $usesExtendedLayout ? 'D' : 'D',
+                'no_mesin'     => $usesExtendedLayout ? 'E' : 'E',
+                'merek'        => $usesExtendedLayout ? 'F' : null,
+                'tipe'         => $usesExtendedLayout ? 'G' : null,
+                'isi_silinder' => $usesExtendedLayout ? 'H' : null,
+                'warna'        => $usesExtendedLayout ? 'I' : null,
+                'pengguna'     => $usesExtendedLayout ? 'J' : null,
+                'year'         => $usesExtendedLayout ? 'K' : 'F',
+                'vehicle_type' => $usesExtendedLayout ? 'L' : 'G',
+            ];
+        }
     }
 
     private function importCellValue(array $row, array $headerMap, string $field, ?string $fallbackColumn): string
@@ -1165,6 +1202,7 @@ class BpkbController extends BaseController
         return [
             'plate_number' => strtoupper(trim((string) ($data['plate_number'] ?? ''))),
             'no_bpkb'      => $normalizeOptional($data['no_bpkb'] ?? null),
+            'nibar'        => $normalizeOptional($data['nibar'] ?? null),
             'no_rangka'    => $normalizeOptional($data['no_rangka'] ?? null),
             'no_mesin'     => $normalizeOptional($data['no_mesin'] ?? null),
         ];

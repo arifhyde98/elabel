@@ -7,6 +7,7 @@
     $shouldOpenModal = ! empty(old('plate_number'))
         || ! empty(old('year'))
         || ! empty(old('no_bpkb'))
+        || ! empty(old('nibar'))
         || ! empty(old('no_rangka'))
         || ! empty(old('no_mesin'))
         || ! empty(old('merek'))
@@ -48,6 +49,9 @@
     }
     .bpkb-col-bpkb {
         width: 126px;
+    }
+    .bpkb-col-nibar {
+        display: none;
     }
     .bpkb-col-rangka,
     .bpkb-col-mesin {
@@ -155,6 +159,7 @@
                             <th class="bpkb-col-no">No</th>
                             <th class="bpkb-col-plate">No. Polisi</th>
                             <th class="bpkb-col-bpkb">No. BPKB</th>
+                            <th class="bpkb-col-nibar">NIBAR</th>
                             <th class="bpkb-col-rangka">No. Rangka</th>
                             <th class="bpkb-col-mesin">No. Mesin</th>
                             <th class="bpkb-col-merek">Merek</th>
@@ -170,6 +175,7 @@
                                 <td class="bpkb-col-no"><?= $i++ ?></td>
                                 <td class="bpkb-col-plate"><?= esc((string) $item['plate_number']) ?></td>
                                 <td class="bpkb-col-bpkb"><?= esc((string) ($item['no_bpkb'] ?? '-')) ?></td>
+                                <td class="bpkb-col-nibar"><?= esc((string) ($item['nibar'] ?? '-')) ?></td>
                                 <td class="bpkb-col-rangka"><?= esc((string) ($item['no_rangka'] ?? '-')) ?></td>
                                 <td class="bpkb-col-mesin"><?= esc((string) ($item['no_mesin'] ?? '-')) ?></td>
                                 <td class="bpkb-col-merek"><?= esc((string) ($item['merek'] ?? '-')) ?></td>
@@ -247,6 +253,10 @@
                         <label>No. BPKB (opsional)</label>
                     </div>
                     <div class="form-group floating-input">
+                        <input type="text" name="nibar" id="nibar" class="form-control" value="<?= esc((string) old('nibar')) ?>" placeholder=" ">
+                        <label>Nibar (opsional)</label>
+                    </div>
+                    <div class="form-group floating-input">
                         <input type="text" name="no_rangka" id="no_rangka" class="form-control" value="<?= esc((string) old('no_rangka')) ?>" placeholder=" ">
                         <label>No. Rangka (opsional)</label>
                     </div>
@@ -310,7 +320,7 @@
                         </a>
                     </div>
                     <div class="mb-3 small text-muted">
-                        Kolom yang dibaca: `No. Polisi`, `No. BPKB`, `No. Rangka`, `No. Mesin`, `Merek`, `Tipe`, `Isi Silinder`, `Warna`, `Pengguna`, `Tahun`, `Jenis`.
+                        Kolom yang dibaca: `No. Polisi`, `No. BPKB`, `NIBAR`, `No. Rangka`, `No. Mesin`, `Merek`, `Tipe`, `Isi Silinder`, `Warna`, `Pengguna`, `Tahun`, `Jenis`.
                     </div>
                     <div class="form-group mb-0">
                         <label for="import_file">File Import</label>

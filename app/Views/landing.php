@@ -875,6 +875,7 @@
                                         </div>
                                         <div class="detail-grid">
                                             <div class="detail-item"><span>Nomor BPKB</span><strong><?= esc((string) ($item['no_bpkb'] ?? '-')) ?></strong></div>
+                                            <div class="detail-item"><span>Nibar</span><strong><?= esc((string) ($item['nibar'] ?? '-')) ?></strong></div>
                                             <div class="detail-item"><span>Tahun</span><strong><?= esc((string) $item['year']) ?></strong></div>
                                             <div class="detail-item"><span>Jenis</span><strong><?= esc((string) $item['vehicle_type']) ?></strong></div>
                                             <div class="detail-item"><span>Box</span><strong><?= esc((string) ($item['box_code'] ?? '-')) ?></strong></div>

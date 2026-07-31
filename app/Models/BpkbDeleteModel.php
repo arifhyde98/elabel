@@ -24,6 +24,7 @@ class BpkbDeleteModel extends Model
         'reason_detail',
         'plate_number',
         'no_bpkb',
+        'nibar',
         'no_rangka',
         'no_mesin',
         'merek',

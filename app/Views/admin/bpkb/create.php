@@ -57,6 +57,10 @@
                         <input type="text" name="no_bpkb" id="no_bpkb" class="form-control" value="<?= esc((string) old('no_bpkb')) ?>">
                     </div>
                     <div class="form-group">
+                        <label for="nibar">NIBAR</label>
+                        <input type="text" name="nibar" id="nibar" class="form-control" value="<?= esc((string) old('nibar')) ?>">
+                    </div>
+                    <div class="form-group">
                         <label for="no_rangka">No. Rangka</label>
                         <input type="text" name="no_rangka" id="no_rangka" class="form-control" value="<?= esc((string) old('no_rangka')) ?>">
                     </div>

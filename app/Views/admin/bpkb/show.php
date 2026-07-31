@@ -33,6 +33,9 @@
                     <dt class="col-sm-3">No. BPKB</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['no_bpkb'] ?? '-')) ?></dd>
 
+                    <dt class="col-sm-3">NIBAR</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['nibar'] ?? '-')) ?></dd>
+
                     <dt class="col-sm-3">No. Rangka</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['no_rangka'] ?? '-')) ?></dd>
 
