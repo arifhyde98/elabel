@@ -30,6 +30,11 @@
             box-sizing: border-box;
         }
 
+        html {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             color: var(--text-main);
@@ -37,6 +42,7 @@
                 linear-gradient(135deg, rgba(7, 21, 47, 0.98) 0%, rgba(14, 45, 99, 0.96) 58%, rgba(29, 78, 216, 0.92) 100%),
                 repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px);
             overflow-x: hidden;
+            width: 100%;
             min-height: 100vh;
         }
 
@@ -722,11 +728,306 @@
         }
 
         @media (max-width: 768px) {
-            .container_fluida { padding: 0 20px; }
-            .agency-info { gap: 10px; flex-direction: column; text-align: center; }
-            .doc-toggles { flex-direction: column; }
-            .card-footer { flex-direction: column; text-align: center; gap: 20px; }
-            .right-section { flex-direction: column; align-items: center; }
+            :root {
+                --landing-card-width: 100%;
+            }
+
+            .container,
+            .container_fluida {
+                width: 100%;
+                max-width: 100%;
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .top-bar {
+                height: auto;
+                min-height: 64px;
+            }
+
+            .top-bar-content {
+                gap: 12px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            .status-text {
+                min-width: 0;
+                font-size: 13px;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+
+            .btn-login-admin {
+                flex: 0 0 auto;
+                min-height: 44px;
+                max-width: 148px;
+                padding: 7px 12px;
+                border-radius: 999px;
+                gap: 7px;
+                font-size: 13px;
+                line-height: 1.2;
+                justify-content: center;
+            }
+
+            .main-content {
+                min-height: calc(100vh - 64px);
+                padding-top: 28px;
+                padding-bottom: 48px;
+            }
+
+            .main-layout {
+                width: 100%;
+                gap: 22px;
+                margin-bottom: 20px;
+            }
+
+            .agency-info {
+                gap: 12px;
+                flex-direction: column;
+                text-align: center;
+                margin-bottom: 28px;
+            }
+
+            .agency-logo {
+                width: 72px;
+                border-radius: 16px;
+            }
+
+            .agency-text h1 {
+                font-size: 19px;
+                line-height: 1.25;
+            }
+
+            .agency-text p {
+                font-size: 12px;
+            }
+
+            .hero-titles h2 {
+                font-size: 28px;
+                line-height: 1.18;
+            }
+
+            .hero-titles .subtitle {
+                margin-top: 12px;
+                font-size: 16px;
+            }
+
+            .right-section {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .floating-btn {
+                width: 100%;
+                min-height: 54px;
+                justify-content: space-between;
+                padding: 12px 18px;
+                border-radius: 18px;
+                font-size: 14px;
+            }
+
+            .document-summary,
+            .search-card,
+            .result-panel {
+                border-radius: 20px;
+                padding: 20px;
+            }
+
+            .document-summary h3,
+            .result-panel h3 {
+                font-size: 18px;
+                line-height: 1.3;
+            }
+
+            .summary-grid {
+                gap: 12px;
+            }
+
+            .summary-item {
+                min-height: 62px;
+                padding: 12px 14px;
+                border-radius: 14px;
+            }
+
+            .summary-label {
+                min-width: 0;
+                font-size: 13px;
+                line-height: 1.25;
+            }
+
+            .summary-value {
+                flex: 0 0 auto;
+                font-size: 24px;
+            }
+
+            .doc-toggles {
+                flex-direction: column;
+                margin-bottom: 18px;
+            }
+
+            .toggle-item {
+                width: 100%;
+                min-height: 56px;
+                padding: 12px 16px;
+                border-radius: 14px;
+                font-size: 14px;
+            }
+
+            .toggle-item .icon-vehicle {
+                width: 48px;
+                right: 16px;
+            }
+
+            .toggle-item .icon-map {
+                width: 34px;
+                right: 16px;
+            }
+
+            .search-field {
+                height: 54px;
+                margin-bottom: 18px;
+                padding: 0 14px;
+                border-radius: 14px;
+            }
+
+            .icon-search {
+                width: 22px;
+                height: 22px;
+                margin-right: 10px;
+            }
+
+            .search-field input {
+                font-size: 14px;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: left;
+                gap: 16px;
+            }
+
+            .info-text {
+                font-size: 12px;
+            }
+
+            .btn-cek {
+                width: 100%;
+                min-height: 50px;
+                justify-content: center;
+                padding: 12px 16px;
+                border-radius: 14px;
+                font-size: 15px;
+            }
+
+            .result-section {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .result-head {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .result-title {
+                font-size: 18px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .loan-modal {
+                padding: 12px;
+            }
+
+            .loan-modal-dialog {
+                border-radius: 16px;
+                max-height: calc(100vh - 24px);
+            }
+
+            .loan-modal-header,
+            .loan-modal-body,
+            .loan-modal-footer {
+                padding: 16px;
+            }
+
+            .loan-modal-footer {
+                flex-direction: column-reverse;
+            }
+
+            .loan-modal-footer button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container,
+            .container_fluida {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .top-bar-content {
+                align-items: stretch;
+            }
+
+            .status-text {
+                display: flex;
+                align-items: center;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .btn-login-admin {
+                max-width: 132px;
+                min-height: 42px;
+                font-size: 12px;
+            }
+
+            .btn-login-admin .icon-small {
+                width: 18px;
+                height: 18px;
+            }
+
+            .main-content {
+                padding-top: 24px;
+            }
+
+            .agency-logo {
+                width: 68px;
+            }
+
+            .agency-text h1 {
+                font-size: 18px;
+            }
+
+            .hero-titles h2 {
+                font-size: 26px;
+            }
+
+            .hero-titles .subtitle {
+                font-size: 15px;
+            }
+
+            .document-summary,
+            .search-card,
+            .result-panel {
+                padding: 18px;
+                border-radius: 18px;
+            }
+
+            .summary-value {
+                font-size: 22px;
+            }
+
+            .summary-item {
+                gap: 10px;
+            }
         }
     </style>
 </head>

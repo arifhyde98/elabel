@@ -761,6 +761,7 @@ class BpkbController extends BaseController
             $supportPath = 'uploads/bpkb_delete/' . $newName;
         }
 
+        $pdfPath = $this->moveBpkbPdfToDeletedFolder($item['pdf_path'] ?? null, $reason);
         $box = $this->boxes->find((int) ($item['box_id'] ?? 0));
         $this->deletes->where('bpkb_id', $id)->delete();
         $this->deletes->insert([
@@ -780,7 +781,7 @@ class BpkbController extends BaseController
             'warna'         => $item['warna'] ?? null,
             'pengguna'      => $item['pengguna'] ?? null,
             'status'        => $item['status'] ?? null,
-            'pdf_path'      => $item['pdf_path'] ?? null,
+            'pdf_path'      => $pdfPath,
             'input_by'      => $item['input_by'] ?? null,
             'deleted_by'    => (int) session()->get('user_id'),
             'deleted_at'    => date('Y-m-d H:i:s'),
@@ -793,6 +794,57 @@ class BpkbController extends BaseController
         $this->logActivity('delete', 'BPKB', 'Memindahkan BPKB ' . ($item['plate_number'] ?? '-') . ' ke BPKB keluar. Alasan: ' . $reason . '.', 'bpkb', $id);
 
         return redirect()->to(site_url('admin/bpkb-deleted'))->with('success', 'Data BPKB berhasil dihapus dan dihapus dari database.');
+    }
+
+    private function moveBpkbPdfToDeletedFolder(?string $currentPath, string $reason): ?string
+    {
+        if (empty($currentPath)) {
+            return null;
+        }
+
+        $sourcePath = WRITEPATH . $currentPath;
+        if (! is_file($sourcePath)) {
+            return $currentPath;
+        }
+
+        $folder = $this->deletedBpkbPdfFolder($reason);
+        $targetDirectory = WRITEPATH . 'uploads/' . $folder;
+        if (! is_dir($targetDirectory)) {
+            mkdir($targetDirectory, 0755, true);
+        }
+
+        $filename = basename($sourcePath);
+        $targetPath = $targetDirectory . DIRECTORY_SEPARATOR . $filename;
+        if (is_file($targetPath)) {
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            $name = pathinfo($filename, PATHINFO_FILENAME);
+            $targetPath = $targetDirectory . DIRECTORY_SEPARATOR . $name . '-' . uniqid('', true) . ($extension !== '' ? '.' . $extension : '');
+        }
+
+        if (@rename($sourcePath, $targetPath)) {
+            return 'uploads/' . $folder . '/' . basename($targetPath);
+        }
+
+        if (@copy($sourcePath, $targetPath)) {
+            @unlink($sourcePath);
+            return 'uploads/' . $folder . '/' . basename($targetPath);
+        }
+
+        return $currentPath;
+    }
+
+    private function deletedBpkbPdfFolder(string $reason): string
+    {
+        $folders = [
+            'Di pinjam'                  => 'bpkb_dipinjam',
+            'Penjualan'                  => 'bpkb_penjualan',
+            'Dihibahkan'                 => 'bpkb_dihibahkan',
+            'Kendaraan hilang'           => 'bpkb_kendaraan_hilang',
+            'Kendaraan tidak ditemukan'  => 'bpkb_kendaraan_tidak_ditemukan',
+            'Lainnya'                    => 'bpkb_lainnya',
+        ];
+
+        return $folders[$reason] ?? 'bpkb_lainnya';
     }
 
     private function resolveBoxForYear(int $year, ?string $vehicleType, ?int $excludeBpkbId = null): ?int

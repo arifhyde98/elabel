@@ -58,6 +58,7 @@ class AuthController extends BaseController
             'user_name'  => $user['name'],
             'user_email' => $user['email'],
             'user_role'  => $user['role'],
+            'user_photo' => $user['profile_photo'] ?? null,
         ]);
 
         $this->users->update($user['id'], [

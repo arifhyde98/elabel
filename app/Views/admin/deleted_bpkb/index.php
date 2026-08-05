@@ -3,15 +3,85 @@
 <?= $this->section('title') ?>BPKB Keluar | eLabel<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<style>
+    .deleted-bpkb-actions {
+        gap: 0.5rem;
+    }
+
+    .deleted-bpkb-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .deleted-bpkb-header {
+            align-items: center !important;
+            gap: 0.75rem;
+        }
+
+        .deleted-bpkb-header h1 {
+            min-width: 0;
+            margin-bottom: 0;
+            font-size: 1.45rem;
+            line-height: 1.15;
+        }
+
+        .deleted-bpkb-actions {
+            flex: 0 0 auto;
+            gap: 0.45rem;
+        }
+
+        .deleted-bpkb-action {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 12px;
+            font-size: 1rem;
+            margin-left: 0 !important;
+        }
+
+        .deleted-bpkb-action i {
+            margin: 0;
+        }
+
+        .deleted-bpkb-action-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .deleted-bpkb-header h1 {
+            font-size: 1.28rem;
+        }
+
+        .deleted-bpkb-action {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+        }
+    }
+</style>
 <section class="content-header">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="container-fluid d-flex justify-content-between align-items-center deleted-bpkb-header">
         <h1>Daftar BPKB Keluar</h1>
-        <div class="d-flex">
-            <a href="<?= site_url('admin/bpkb-deleted/create') ?>" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah BPKB Keluar
+        <div class="d-flex deleted-bpkb-actions">
+            <a href="<?= site_url('admin/bpkb-deleted/create') ?>" class="btn btn-primary btn-sm deleted-bpkb-action" aria-label="Tambah BPKB Keluar" title="Tambah BPKB Keluar">
+                <i class="fas fa-plus"></i>
+                <span class="deleted-bpkb-action-label">Tambah BPKB Keluar</span>
             </a>
-            <a href="<?= site_url('admin/bpkb-deleted/export') ?>" class="btn btn-success btn-sm ml-2">
-                <i class="fas fa-file-excel"></i> Export Excel
+            <a href="<?= site_url('admin/bpkb-deleted/export') ?>" class="btn btn-success btn-sm ml-2 deleted-bpkb-action" aria-label="Export Excel" title="Export Excel">
+                <i class="fas fa-file-excel"></i>
+                <span class="deleted-bpkb-action-label">Export Excel</span>
             </a>
         </div>
     </div>
@@ -95,11 +165,14 @@
                                 <td><?= esc((string) $item['reason']) ?></td>
                                 <td><?= esc((string) $item['deleted_name']) ?></td>
                                 <td>
-                                    <a href="<?= site_url('admin/bpkb-deleted/' . $item['id']) ?>" class="btn btn-info btn-xs">
-                                        <i class="fas fa-eye"></i> <span class="btn-text">View</span>
+                                    <a href="<?= site_url('admin/bpkb-deleted/' . $item['id']) ?>" class="btn btn-info btn-xs" title="View" aria-label="View">
+                                        <i class="fas fa-eye"></i>
                                     </a>
-                                    <button type="button" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#restoreModal<?= (int) $item['id'] ?>">
-                                        <i class="fas fa-undo"></i> <span class="btn-text">Restore</span>
+                                    <a href="<?= site_url('admin/bpkb-deleted/' . $item['id'] . '/edit') ?>" class="btn btn-primary btn-xs" title="Edit" aria-label="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#restoreModal<?= (int) $item['id'] ?>" title="Restore" aria-label="Restore">
+                                        <i class="fas fa-undo"></i>
                                     </button>
                                     <div class="modal fade" id="restoreModal<?= (int) $item['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="restoreModalLabel<?= (int) $item['id'] ?>" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -130,8 +203,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#permanentDeleteModal<?= (int) $item['id'] ?>">
-                                        <i class="fas fa-trash"></i> <span class="btn-text">Hapus</span>
+                                    <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#permanentDeleteModal<?= (int) $item['id'] ?>" title="Hapus" aria-label="Hapus">
+                                        <i class="fas fa-trash"></i>
                                     </button>
 
                                     <div class="modal fade" id="permanentDeleteModal<?= (int) $item['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="permanentDeleteModalLabel<?= (int) $item['id'] ?>" aria-hidden="true">

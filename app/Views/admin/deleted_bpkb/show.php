@@ -6,9 +6,14 @@
 <section class="content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <h1>Detail BPKB Keluar</h1>
-        <a href="<?= site_url('admin/bpkb-deleted') ?>" class="btn btn-secondary btn-sm">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
+        <div>
+            <a href="<?= site_url('admin/bpkb-deleted/' . $item['id'] . '/edit') ?>" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="<?= site_url('admin/bpkb-deleted') ?>" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
     </div>
 </section>
 <section class="content">
@@ -64,9 +69,26 @@
                     <dt class="col-sm-4">User</dt>
                     <dd class="col-sm-8"><?= esc((string) ($item['deleted_name'] ?? '-')) ?></dd>
 
+                    <dt class="col-sm-4">BPKB</dt>
+                    <dd class="col-sm-8">
+                        <?php if (! empty($item['pdf_path'])): ?>
+                            <a href="<?= site_url('admin/bpkb-deleted/' . $item['id'] . '/view-bpkb') ?>" target="_blank" class="btn btn-sm btn-info">
+                                <i class="fas fa-file-pdf"></i> Lihat BPKB
+                            </a>
+                        <?php else: ?>
+                            Tidak ada
+                        <?php endif; ?>
+                    </dd>
+
                     <dt class="col-sm-4">Dokumen Pendukung</dt>
                     <dd class="col-sm-8">
-                        <?= ! empty($item['support_doc_path']) ? 'Tersedia' : 'Tidak ada' ?>
+                        <?php if (! empty($item['support_doc_path'])): ?>
+                            <a href="<?= site_url('admin/bpkb-deleted/' . $item['id'] . '/support-doc') ?>" target="_blank" class="btn btn-sm btn-info">
+                                <i class="fas fa-file-pdf"></i> Lihat PDF
+                            </a>
+                        <?php else: ?>
+                            Tidak ada
+                        <?php endif; ?>
                     </dd>
                 </dl>
             </div>

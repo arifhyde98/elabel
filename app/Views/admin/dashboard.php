@@ -410,7 +410,7 @@ Admin Dashboard | eLabel
                 <h2>Pemerintah Kabupaten Donggala</h2>
                 <p>Sistem Informasi Manajemen Label Digital (eLabel) - BPKAD Bidang Aset</p>
             </div>
-            <span class="dash-chip"><i class="fas fa-shield-alt mr-1"></i> Sistem Resmi</span>
+            <span class="dash-chip"><i class="fas fa-shield-alt mr-1"></i> Sistem Arsip</span>
         </div>
 
         <div class="dash-grid">

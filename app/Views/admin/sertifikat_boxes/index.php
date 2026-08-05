@@ -3,11 +3,76 @@
 <?= $this->section('title') ?>Data Box Sertipikat | eLabel<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<style>
+    .box-create-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+
+    .box-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+
+    .box-actions .btn,
+    .box-actions form {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    .box-actions form {
+        display: inline-flex;
+    }
+
+    @media (max-width: 767.98px) {
+        .box-header {
+            gap: 0.75rem;
+        }
+
+        .box-header h1 {
+            min-width: 0;
+            margin-bottom: 0;
+            font-size: 1.45rem;
+            line-height: 1.15;
+        }
+
+        .box-create-btn {
+            flex: 0 0 auto;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .box-create-btn i {
+            margin: 0;
+        }
+
+        .box-create-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    }
+</style>
 <section class="content-header">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="container-fluid d-flex justify-content-between align-items-center box-header">
         <h1>Data Box Sertipikat Tanah</h1>
-        <a href="<?= site_url('admin/sertifikat-boxes/create') ?>" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> Tambah Box
+        <a href="<?= site_url('admin/sertifikat-boxes/create') ?>" class="btn btn-primary btn-sm box-create-btn" aria-label="Tambah Box" title="Tambah Box">
+            <i class="fas fa-plus"></i>
+            <span class="box-create-label">Tambah Box</span>
         </a>
     </div>
 </section>
@@ -41,7 +106,7 @@
                                 <td><?= esc((string) ($box['lokasi'] ?? '-')) ?></td>
                                 <td><?= esc((string) ($box['sertifikat_count'] ?? 0)) ?></td>
                                 <td>Maks <?= esc((string) $maxPerBox) ?></td>
-                                <td>
+                                <td class="box-actions">
                                     <a href="<?= site_url('admin/sertifikat-boxes/' . $box['id']) ?>" class="btn btn-info btn-xs">
                                         <i class="fas fa-eye"></i> <span class="btn-text">Detail</span>
                                     </a>

@@ -47,6 +47,21 @@
     .elabel-table .btn-xs {
         border-radius: 8px;
     }
+    .box-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+    .box-actions .btn,
+    .box-actions form {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+    .box-actions form {
+        display: inline-flex;
+    }
     .elabel-table .btn-info {
         background: #e0f2fe;
         border-color: #bae6fd;
@@ -95,7 +110,44 @@
         color: #1d4ed8;
         box-shadow: 0 10px 22px rgba(59, 130, 246, 0.2);
     }
+    .box-create-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+    }
     @media (max-width: 767.98px) {
+        .box-header {
+            gap: 0.75rem;
+        }
+        .box-header h1 {
+            min-width: 0;
+            margin-bottom: 0;
+            font-size: 1.45rem;
+            line-height: 1.15;
+        }
+        .box-create-btn {
+            flex: 0 0 auto;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+        .box-create-btn i {
+            margin: 0;
+        }
+        .box-create-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
         .elabel-table thead th {
             font-size: 0.62rem;
         }
@@ -106,10 +158,11 @@
     }
 </style>
 <section class="content-header">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="container-fluid d-flex justify-content-between align-items-center box-header">
         <h1>Data Box Arsip <?= esc((string) $vehicleLabel) ?></h1>
-        <a href="<?= $vehicleRoute ? site_url('admin/boxes/' . $vehicleRoute . '/create') : site_url('admin/boxes/create') ?>" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> Tambah Box
+        <a href="<?= $vehicleRoute ? site_url('admin/boxes/' . $vehicleRoute . '/create') : site_url('admin/boxes/create') ?>" class="btn btn-primary btn-sm box-create-btn" aria-label="Tambah Box" title="Tambah Box">
+            <i class="fas fa-plus"></i>
+            <span class="box-create-label">Tambah Box</span>
         </a>
     </div>
     <div class="container-fluid mt-2">
@@ -165,7 +218,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td><?= esc((string) ($box['bpkb_count'] ?? 0)) ?></td>
-                                <td>
+                                <td class="box-actions">
                                     <a href="<?= site_url('admin/boxes/' . $box['id']) ?>" class="btn btn-info btn-xs">
                                         <i class="fas fa-eye"></i> <span class="btn-text">Detail</span>
                                     </a>

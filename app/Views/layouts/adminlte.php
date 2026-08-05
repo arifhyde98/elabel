@@ -227,6 +227,13 @@
         .nav-sidebar .nav-link .nav-icon {
             font-size: 0.9rem;
         }
+        .nav-sidebar .nav-item > .nav-link .right {
+            transition: none !important;
+            transform: rotate(0deg) !important;
+        }
+        .nav-sidebar .nav-item.menu-open > .nav-link .right {
+            transform: rotate(90deg) !important;
+        }
         .nav-sidebar .nav-link:hover {
             background: rgba(96, 165, 250, 0.16);
             color: #fff;
@@ -675,6 +682,23 @@
             .btn.btn-xs {
                 padding: 0.2rem 0.3rem;
             }
+            .dataTables_wrapper .dataTables_filter {
+                display: flex;
+                justify-content: flex-end;
+                text-align: right !important;
+                width: 100%;
+            }
+            .dataTables_wrapper .dataTables_filter label {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                width: 100%;
+                text-align: right;
+            }
+            .dataTables_wrapper .dataTables_filter input {
+                width: min(100%, 260px);
+                margin-left: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -687,6 +711,20 @@
         if ($logoData !== '') {
             $logoSrc = 'data:image/png;base64,' . $logoData;
         }
+    }
+
+    $userPhoto = (string) session()->get('user_photo');
+    $userPhotoSrc = $userPhoto !== ''
+        ? site_url('admin/profile/photo')
+        : 'https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/img/user2-160x160.jpg';
+
+    $pendingLoanCount = 0;
+    try {
+        $pendingLoanCount = (new \App\Models\LoanModel())
+            ->where('status', 'Menunggu')
+            ->countAllResults();
+    } catch (\Throwable $e) {
+        $pendingLoanCount = 0;
     }
 ?>
 <div class="wrapper">
@@ -716,34 +754,32 @@
             <li class="nav-item">
                 <a class="nav-link position-relative" href="<?= site_url('admin/loans') ?>" title="Notifikasi Peminjaman">
                     <i class="far fa-bell" style="font-size:1rem; line-height:1;"></i>
-                    <span class="badge badge-danger navbar-badge" style="font-size:0.6rem; padding:2px 5px; border-radius:999px;">!</span>
+                    <?php if ($pendingLoanCount > 0): ?>
+                        <span class="badge badge-danger navbar-badge" style="font-size:0.6rem; padding:2px 5px; border-radius:999px;"><?= esc((string) $pendingLoanCount) ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link d-flex align-items-center" data-toggle="dropdown" href="#" role="button">
-                    <img src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" style="width:28px;height:28px;">
+                    <img src="<?= esc($userPhotoSrc) ?>" class="img-circle elevation-2" alt="User Image" style="width:28px;height:28px;object-fit:cover;">
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <div class="dropdown-item p-2">
                         <div class="d-flex align-items-center">
-                            <img src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/img/user2-160x160.jpg" class="img-circle elevation-2 mr-2" alt="User Image" style="width:38px;height:38px;">
+                            <img src="<?= esc($userPhotoSrc) ?>" class="img-circle elevation-2 mr-2" alt="User Image" style="width:38px;height:38px;object-fit:cover;">
                             <div>
                                 <div class="font-weight-bold">Hallo, <?= esc((string) session()->get('user_name')) ?></div>
-                                <div class="text-muted small">Logged in as Admin</div>
+                                <div class="text-muted small">Login Sebagai Admin</div>
                             </div>
                         </div>
                     </div>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item d-flex justify-content-between align-items-center">
+                    <a href="<?= site_url('admin/profile') ?>" class="dropdown-item d-flex justify-content-between align-items-center">
                         Edit Profile
                         <i class="fas fa-user"></i>
                     </a>
-                    <a href="#" class="dropdown-item d-flex justify-content-between align-items-center">
-                        Ubah Password
-                        <i class="fas fa-cog"></i>
-                    </a>
-                    <a href="#" class="dropdown-item d-flex justify-content-between align-items-center">
-                        Help
+                    <a href="<?= site_url('admin/help') ?>" class="dropdown-item d-flex justify-content-between align-items-center">
+                        Bantuan
                         <i class="fas fa-question-circle"></i>
                     </a>
                     <div class="dropdown-divider"></div>
@@ -775,7 +811,7 @@
                             <i class="nav-icon fas fa-box"></i>
                             <p>
                                 Data Box
-                                <i class="right fas fa-angle-left"></i>
+                                <i class="right fas fa-angle-right"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
@@ -804,7 +840,7 @@
                             <i class="nav-icon fas fa-book"></i>
                             <p>
                                 Arsip
-                                <i class="right fas fa-angle-left"></i>
+                                <i class="right fas fa-angle-right"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
@@ -833,7 +869,7 @@
                             <i class="nav-icon fas fa-chart-line"></i>
                             <p>
                                 Pelaporan
-                                <i class="right fas fa-angle-left"></i>
+                                <i class="right fas fa-angle-right"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">

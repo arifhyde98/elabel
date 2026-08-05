@@ -55,6 +55,10 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
     $routes->post('logout', 'AuthController::logout', ['as' => 'logout']);
     $routes->group('admin', ['filter' => 'admin'], static function ($routes): void {
         $routes->get('/', 'Admin\DashboardController::index', ['as' => 'admin-dashboard']);
+        $routes->get('profile', 'Admin\ProfileController::edit');
+        $routes->get('profile/photo', 'Admin\ProfileController::photo');
+        $routes->post('profile', 'Admin\ProfileController::update');
+        $routes->get('help', 'Admin\HelpController::index');
         $routes->post('activity-logs/cleanup', 'Admin\DashboardController::cleanupActivityLogs');
         $routes->get('boxes', 'Admin\BoxController::index');
         $routes->get('boxes/r4', 'Admin\BoxController::index/r4');
@@ -104,7 +108,11 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
 
         $routes->get('bpkb-deleted', 'Admin\DeletedBpkbController::index');
         $routes->get('bpkb-deleted/create', 'Admin\DeletedBpkbController::create');
+        $routes->get('bpkb-deleted/(:num)/edit', 'Admin\DeletedBpkbController::edit/$1');
+        $routes->get('bpkb-deleted/(:num)/view-bpkb', 'Admin\DeletedBpkbController::viewBpkbPdf/$1');
+        $routes->get('bpkb-deleted/(:num)/support-doc', 'Admin\DeletedBpkbController::viewSupportDoc/$1');
         $routes->get('bpkb-deleted/(:num)', 'Admin\DeletedBpkbController::show/$1');
+        $routes->post('bpkb-deleted/(:num)', 'Admin\DeletedBpkbController::update/$1');
         $routes->post('bpkb-deleted/(:num)/restore', 'Admin\DeletedBpkbController::restore/$1');
         $routes->post('bpkb-deleted/(:num)/delete', 'Admin\DeletedBpkbController::destroy/$1');
         $routes->get('bpkb-deleted/export', 'Admin\DeletedBpkbController::exportExcel');
@@ -146,6 +154,9 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
         $routes->post('users/(:num)/delete', 'Admin\UserController::delete/$1');
     });
 });
+
+// Monitoring API (Spoke)
+$routes->get('api/health-check', 'HealthCheck::index');
 
 /*
  * --------------------------------------------------------------------

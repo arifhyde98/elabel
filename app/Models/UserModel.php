@@ -18,6 +18,7 @@ class UserModel extends Model
         'password',
         'role',
         'is_active',
+        'profile_photo',
         'last_login_at',
         'last_login_ip',
     ];

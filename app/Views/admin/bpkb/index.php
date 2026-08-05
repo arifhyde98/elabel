@@ -22,16 +22,25 @@
         width: 100% !important;
         table-layout: fixed;
     }
+    .bpkb-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
     #bpkb-table th,
     #bpkb-table td {
         vertical-align: top;
         font-size: 0.8rem;
         line-height: 1.2;
         padding: 0.38rem 0.45rem;
+        height: 48px;
+        overflow-wrap: anywhere;
     }
     #bpkb-table th {
         font-size: 0.76rem;
         letter-spacing: 0.02em;
+        text-align: left;
+        vertical-align: middle;
     }
     #bpkb-table .btn-xs {
         white-space: nowrap;
@@ -46,34 +55,49 @@
     }
     .bpkb-col-plate {
         width: 108px;
+        min-width: 108px;
+        max-width: 108px;
     }
     .bpkb-col-bpkb {
         width: 126px;
+        min-width: 126px;
+        max-width: 126px;
     }
     .bpkb-col-nibar {
-        display: none;
+        width: 150px;
+        min-width: 150px;
+        max-width: 150px;
     }
     .bpkb-col-rangka,
     .bpkb-col-mesin {
         width: 132px;
+        min-width: 132px;
+        max-width: 132px;
         word-break: break-word;
     }
     .bpkb-col-merek {
         width: 86px;
+        min-width: 86px;
+        max-width: 86px;
     }
     .bpkb-col-year {
         width: 82px;
+        min-width: 82px;
+        max-width: 82px;
         text-align: center;
         white-space: nowrap;
     }
     .bpkb-col-jenis {
         width: 62px;
+        min-width: 62px;
+        max-width: 62px;
         text-align: center;
         white-space: nowrap;
     }
     .bpkb-col-aksi {
         width: 110px;
         min-width: 110px;
+        max-width: 110px;
         white-space: nowrap;
     }
     .vehicle-tabs {
@@ -109,25 +133,87 @@
         color: #1d4ed8;
         box-shadow: 0 10px 22px rgba(59, 130, 246, 0.2);
     }
+    .bpkb-header-actions {
+        gap: 0.5rem;
+    }
+    .header-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+    }
     @media (max-width: 767.98px) {
+        .bpkb-page-header {
+            align-items: center !important;
+            gap: 0.75rem;
+        }
+        .bpkb-page-header h1 {
+            min-width: 0;
+            margin-bottom: 0;
+            font-size: 1.45rem;
+            line-height: 1.15;
+        }
+        .bpkb-header-actions {
+            flex: 0 0 auto;
+            gap: 0.45rem;
+        }
+        .header-action-btn {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 12px;
+            font-size: 1rem;
+            margin-right: 0 !important;
+        }
+        .header-action-btn i {
+            margin: 0;
+        }
+        .header-action-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
         .vehicle-tab {
             min-width: 52px;
             padding: 0.3rem 0.36rem;
         }
+        #bpkb-table {
+            width: 886px !important;
+            min-width: 886px;
+        }
+    }
+    @media (max-width: 420px) {
+        .bpkb-page-header h1 {
+            font-size: 1.28rem;
+        }
+        .header-action-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+        }
     }
 </style>
 <section class="content-header">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="container-fluid d-flex justify-content-between align-items-center bpkb-page-header">
         <h1>Data BPKB <?= esc((string) $vehicleLabel) ?></h1>
-        <div class="d-flex align-items-center">
-            <a href="<?= site_url('admin/bpkb/export' . ($vehicleType ? '?type=' . $vehicleType : '')) ?>" class="btn btn-success btn-sm mr-2">
-                <i class="fas fa-file-excel"></i> Download Excel
+        <div class="d-flex align-items-center bpkb-header-actions">
+            <a href="<?= site_url('admin/bpkb/export' . ($vehicleType ? '?type=' . $vehicleType : '')) ?>" class="btn btn-success btn-sm mr-2 header-action-btn" aria-label="Download Excel" title="Download Excel">
+                <i class="fas fa-file-excel"></i>
+                <span class="header-action-label">Download Excel</span>
             </a>
-            <button type="button" class="btn btn-secondary btn-sm mr-2" data-toggle="modal" data-target="#modal-import-bpkb">
-                <i class="fas fa-file-upload"></i> Import Excel
+            <button type="button" class="btn btn-secondary btn-sm mr-2 header-action-btn" data-toggle="modal" data-target="#modal-import-bpkb" aria-label="Import Excel" title="Import Excel">
+                <i class="fas fa-file-upload"></i>
+                <span class="header-action-label">Import Excel</span>
             </button>
-            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-bpkb">
-                <i class="fas fa-plus"></i> Tambah BPKB
+            <button type="button" class="btn btn-primary btn-sm header-action-btn" data-toggle="modal" data-target="#modal-bpkb" aria-label="Tambah BPKB" title="Tambah BPKB">
+                <i class="fas fa-plus"></i>
+                <span class="header-action-label">Tambah BPKB</span>
             </button>
         </div>
     </div>
@@ -152,7 +238,7 @@
     <div class="container-fluid">
         <?= view('partials/alerts') ?>
         <div class="card">
-            <div class="card-body table-responsive">
+            <div class="card-body table-responsive bpkb-table-wrap">
                 <table id="bpkb-table" class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -163,7 +249,7 @@
                             <th class="bpkb-col-rangka">No. Rangka</th>
                             <th class="bpkb-col-mesin">No. Mesin</th>
                             <th class="bpkb-col-merek">Merek</th>
-                            <th class="bpkb-col-year">Tahun Pembuatan</th>
+                            <th class="bpkb-col-year">Tahun<br>Pembuatan</th>
                             <th class="bpkb-col-jenis">Jenis</th>
                             <th class="bpkb-col-aksi">Aksi</th>
                         </tr>
@@ -342,6 +428,11 @@
     $(function () {
         $('#bpkb-table').DataTable({
             pageLength: 50,
+            lengthChange: false,
+            autoWidth: false,
+            columnDefs: [
+                { targets: 3, visible: false, searchable: true }
+            ],
             order: [[0, 'asc']],
             language: {
                 search: '',
