@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register | eLabel</title>
+    <title>Register | ArsipKu</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition register-page">
 <div class="register-box">
     <div class="register-logo">
-        <b>eLabel</b> Register
+        <b>ArsipKu</b> Register
     </div>
 
     <div class="card">

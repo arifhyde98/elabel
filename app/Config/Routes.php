@@ -31,6 +31,8 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 $routes->post('loan-request', 'LoanController::storePublic');
+$routes->get('informasi-kebijakan', 'PublicInfoController::policy');
+$routes->get('status-pengajuan', 'PublicInfoController::loanStatus');
 
 $routes->group('', ['filter' => 'guest'], static function ($routes): void {
     $routes->get('login', 'AuthController::login', ['as' => 'login']);
@@ -143,7 +145,6 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
         $routes->post('loans/manual', 'Admin\LoanController::storeManual');
         $routes->post('loans/(:num)/approve', 'Admin\LoanController::approve/$1');
         $routes->post('loans/(:num)/reject', 'Admin\LoanController::reject/$1');
-        $routes->post('loans/(:num)/return', 'Admin\LoanController::markReturned/$1');
 
         $routes->get('users', 'Admin\UserController::index');
         $routes->get('users/create', 'Admin\UserController::create');

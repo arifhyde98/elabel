@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Bantuan | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Bantuan | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">
@@ -13,7 +13,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
-                <h5>eLabel Donggala</h5>
+                <h5>ArsipKu Donggala</h5>
                 <p class="text-muted mb-4">Gunakan halaman ini sebagai pintasan bantuan penggunaan sistem.</p>
 
                 <div class="row">

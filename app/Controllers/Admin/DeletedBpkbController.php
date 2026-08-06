@@ -303,7 +303,7 @@ class DeletedBpkbController extends BaseController
         $loanCount = $loanModel->where('bpkb_id', $record['bpkb_id'])->countAllResults();
         if ($loanCount > 0) {
             return redirect()->to(site_url('admin/bpkb-deleted'))
-                ->with('error', 'Tidak bisa hapus permanen: masih ada data peminjaman terkait.');
+                ->with('error', 'Tidak bisa hapus permanen: masih ada data permintaan scan terkait.');
         }
         $this->deletes->delete($id);
         $this->logActivity('permanent_delete', 'BPKB Keluar', 'Menghapus permanen BPKB keluar ' . ($record['plate_number'] ?? '-') . '.', 'bpkb_deletes', $id);

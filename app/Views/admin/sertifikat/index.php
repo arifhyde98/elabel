@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Data Sertipikat Tanah | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Data Sertipikat Tanah | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <?php

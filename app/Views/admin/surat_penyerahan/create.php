@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Tambah Data Surat Penyerahan | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Tambah Data Surat Penyerahan | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">

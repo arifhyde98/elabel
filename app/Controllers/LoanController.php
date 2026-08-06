@@ -42,7 +42,7 @@ class LoanController extends BaseController
         $item   = $this->bpkb->find($bpkbId);
 
         if (! $item || $item['status'] !== 'Tersedia') {
-            return redirect()->back()->with('error', 'BPKB tidak tersedia untuk dipinjam.');
+            return redirect()->back()->with('error', 'BPKB tidak tersedia untuk diminta scan.');
         }
 
         $exists = $this->loans
@@ -51,7 +51,7 @@ class LoanController extends BaseController
             ->first();
 
         if ($exists) {
-            return redirect()->back()->with('error', 'Pengajuan peminjaman sudah ada.');
+            return redirect()->back()->with('error', 'Pengajuan permintaan scan sudah ada.');
         }
 
         $loanId = $this->loans->insert([
@@ -68,7 +68,7 @@ class LoanController extends BaseController
             'changed_at' => date('Y-m-d H:i:s'),
         ]);
 
-        return redirect()->to(site_url('loans'))->with('success', 'Pengajuan peminjaman berhasil dikirim.');
+        return redirect()->to(site_url('loans'))->with('success', 'Pengajuan permintaan scan berhasil dikirim.');
     }
 
     public function storePublic()
@@ -92,7 +92,7 @@ class LoanController extends BaseController
         $item   = $this->bpkb->find($bpkbId);
 
         if (! $item || $item['status'] !== 'Tersedia') {
-            return redirect()->to($returnUrl)->withInput()->with('error', 'BPKB tidak tersedia untuk dipinjam.');
+            return redirect()->to($returnUrl)->withInput()->with('error', 'BPKB tidak tersedia untuk diminta scan.');
         }
 
         $exists = $this->loans
@@ -100,7 +100,7 @@ class LoanController extends BaseController
             ->where('status', 'Menunggu')
             ->first();
         if ($exists) {
-            return redirect()->to($returnUrl)->withInput()->with('error', 'Pengajuan peminjaman sudah ada.');
+            return redirect()->to($returnUrl)->withInput()->with('error', 'Pengajuan permintaan scan sudah ada.');
         }
 
         $db = db_connect();
@@ -141,7 +141,7 @@ class LoanController extends BaseController
 
         return redirect()
             ->to($returnUrl)
-            ->with('success', 'Pengajuan peminjaman berhasil dikirim.')
+            ->with('success', 'Pengajuan permintaan scan berhasil dikirim.')
             ->with('success_detail', [
                 'code' => $code,
                 'name' => (string) $this->request->getPost('requester_name'),

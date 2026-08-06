@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Detail Sertipikat | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Detail Sertipikat | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">

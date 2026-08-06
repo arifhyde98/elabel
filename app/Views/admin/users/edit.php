@@ -8,7 +8,7 @@
     $profileMode = (bool) ($profileMode ?? false);
 ?>
 
-<?= $this->section('title') ?><?= esc((string) $pageTitle) ?> | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?><?= esc((string) $pageTitle) ?> | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">

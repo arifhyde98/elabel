@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/userlte') ?>
 
-<?= $this->section('title') ?>Dashboard | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Dashboard | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">

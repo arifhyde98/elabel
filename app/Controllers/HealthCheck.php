@@ -27,7 +27,7 @@ class HealthCheck extends Controller
         }
 
         return $this->response->setJSON([
-            'project' => 'eLabel',
+            'project' => 'ArsipKu',
             'framework' => 'CodeIgniter ' . \CodeIgniter\CodeIgniter::CI_VERSION,
             'status' => $status,
             'database' => $dbStatus,

@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Forgot Password | eLabel</title>
+    <title>Forgot Password | ArsipKu</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <b>eLabel</b> Reset
+        <b>ArsipKu</b> Reset
     </div>
 
     <div class="card">

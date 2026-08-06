@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Tambah Box <?= esc((string) $vehicleLabel) ?> | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Tambah Box <?= esc((string) $vehicleLabel) ?> | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">

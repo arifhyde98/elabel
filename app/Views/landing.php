@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eLabel 2025 - Pemerintah Kabupaten Donggala</title>
+    <title>ArsipKu 2025 - Pemerintah Kabupaten Donggala</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1045,7 +1045,7 @@
 
     <header class="top-bar">
         <div class="container_fluida top-bar-content">
-            <span class="status-text">ANDA SEDANG LOGIN ELABEL 2025</span>
+            <span class="status-text">ANDA SEDANG LOGIN ARSIPKU 2025</span>
             <a class="btn-login-admin" href="<?= site_url('login') ?>">
                 <img src="https://img.icons8.com/m_outlined/50/FFFFFF/user-male-circle.png" alt="user icon" class="icon-small">
                 Login Admin
@@ -1072,18 +1072,18 @@
                 </div>
 
                 <div class="hero-titles">
-                    <h2>eLabel 2025: Akses Cepat</h2>
+                    <h2>ArsipKu 2025: Akses Cepat</h2>
                     <h2>Pengelolaan Aset Donggala</h2>
                     <p class="subtitle">Pengecekan sebelum login</p>
                 </div>
             </div>
 
             <aside class="right-section">
-                <a href="#" class="floating-btn">
+                <a href="<?= site_url('informasi-kebijakan') ?>" class="floating-btn">
                     Informasi Kebijakan
                     <img src="https://img.icons8.com/m_sharp/50/FFFFFF/info.png" alt="info" class="icon-med">
                 </a>
-                <a href="#" class="floating-btn">
+                <a href="<?= site_url('status-pengajuan') ?>" class="floating-btn">
                     Status Pengajuan
                     <svg class="svg-icon-med" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="currentColor" d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 2v14h10V5H7Zm2 3h6v2H9V8Zm0 4h6v2H9v-2Zm0 4h4v2H9v-2Z"/>
@@ -1134,7 +1134,7 @@
 
                 <div class="card-footer">
                     <p class="info-text">
-                        Masukkan kriteria pencarian dokumen. Detail akan tampil untuk pengajuan peminjaman dari hasil pengecekan.
+                        Masukkan kriteria pencarian dokumen. Detail akan tampil untuk pengajuan permintaan scan dari hasil pengecekan.
                     </p>
                     <button class="btn-cek" type="submit">
                         <img src="https://img.icons8.com/m_outlined/50/FFD700/scan-stock.png" alt="scan" class="icon-small">
@@ -1150,7 +1150,7 @@
             <?php if (! empty($successDetail) && is_array($successDetail)): ?>
                 <div class="alert alert-success">
                     <strong>Nomor Pengajuan:</strong> <?= esc((string) ($successDetail['code'] ?? '')) ?><br>
-                    <span>Nama: <?= esc((string) ($successDetail['name'] ?? '-')) ?> - No. HP: <?= esc((string) ($successDetail['phone'] ?? '-')) ?></span>
+                    <span>Nama: <?= esc((string) ($successDetail['name'] ?? '-')) ?> - No. WhatsApp: <?= esc((string) ($successDetail['phone'] ?? '-')) ?></span>
                 </div>
             <?php endif; ?>
         </div>
@@ -1186,7 +1186,7 @@
                                             <div class="detail-item"><span>Pengguna</span><strong><?= esc((string) ($item['pengguna'] ?? '-')) ?></strong></div>
                                         </div>
                                         <?php if (($item['status'] ?? '') === 'Tersedia'): ?>
-                                            <button class="btn-secondary" type="button" data-open-loan-modal="<?= esc($loanFormId) ?>">Peminjaman</button>
+                                            <button class="btn-secondary" type="button" data-open-loan-modal="<?= esc($loanFormId) ?>">Minta File Scan</button>
                                             <div id="<?= esc($loanFormId) ?>" class="loan-modal" aria-hidden="true">
                                                 <div class="loan-modal-backdrop" data-close-loan-modal></div>
                                                 <div class="loan-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="<?= esc($loanFormId) ?>-title">
@@ -1196,7 +1196,7 @@
                                                         <input type="hidden" name="return_url" value="<?= esc(current_url() . (! empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '') . '#umpan-balik') ?>">
                                                         <div class="loan-modal-header">
                                                             <div>
-                                                                <h3 class="loan-modal-title" id="<?= esc($loanFormId) ?>-title">Form Peminjaman BPKB</h3>
+                                                                <h3 class="loan-modal-title" id="<?= esc($loanFormId) ?>-title">Form Permintaan File Scan BPKB</h3>
                                                                 <div class="loan-modal-subtitle"><?= esc((string) $item['plate_number']) ?> - Box <?= esc((string) ($item['box_code'] ?? '-')) ?></div>
                                                             </div>
                                                             <button type="button" class="loan-modal-close" data-close-loan-modal aria-label="Tutup">&times;</button>
@@ -1208,7 +1208,7 @@
                                                                     <input type="text" name="requester_name" value="<?= esc((string) old('requester_name')) ?>" required>
                                                                 </div>
                                                                 <div>
-                                                                    <label>No. HP</label>
+                                                                    <label>No. WhatsApp</label>
                                                                     <input type="text" name="requester_phone" value="<?= esc((string) old('requester_phone')) ?>" required>
                                                                 </div>
                                                             </div>
@@ -1272,20 +1272,20 @@
                                             <div class="detail-item"><span>Dinas</span><strong><?= esc((string) ($item['dinas'] ?? '-')) ?></strong></div>
                                         </div>
                                         <?php $sertifikatInfoId = 'loan-form-sertifikat-' . (int) $item['id']; ?>
-                                        <button class="btn-secondary" type="button" data-open-loan-modal="<?= esc($sertifikatInfoId) ?>">Peminjaman</button>
+                                        <button class="btn-secondary" type="button" data-open-loan-modal="<?= esc($sertifikatInfoId) ?>">Minta File Scan</button>
                                         <div id="<?= esc($sertifikatInfoId) ?>" class="loan-modal" aria-hidden="true">
                                             <div class="loan-modal-backdrop" data-close-loan-modal></div>
                                             <div class="loan-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="<?= esc($sertifikatInfoId) ?>-title">
                                                 <div class="loan-modal-header">
                                                     <div>
-                                                        <h3 class="loan-modal-title" id="<?= esc($sertifikatInfoId) ?>-title">Peminjaman Sertipikat Tanah</h3>
+                                                        <h3 class="loan-modal-title" id="<?= esc($sertifikatInfoId) ?>-title">Permintaan File Scan Sertipikat Tanah</h3>
                                                         <div class="loan-modal-subtitle"><?= esc((string) ($item['no_sertipikat'] ?? '-')) ?></div>
                                                     </div>
                                                     <button type="button" class="loan-modal-close" data-close-loan-modal aria-label="Tutup">&times;</button>
                                                 </div>
                                                 <div class="loan-modal-body">
                                                     <div class="empty-state">
-                                                        Pengajuan peminjaman sertipikat tanah belum tersedia secara online. Silakan hubungi admin Bidang Aset dengan membawa informasi nomor sertipikat ini.
+                                                        Pengajuan permintaan scan sertipikat tanah belum tersedia secara online. Silakan hubungi admin Bidang Aset dengan membawa informasi nomor sertipikat ini.
                                                     </div>
                                                 </div>
                                                 <div class="loan-modal-footer">

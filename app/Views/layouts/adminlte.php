@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= esc($this->renderSection('title') ?: 'Admin Dashboard | eLabel') ?></title>
+    <title><?= esc($this->renderSection('title') ?: 'Admin Dashboard | ArsipKu') ?></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -744,7 +744,7 @@
                 <a href="<?= site_url('admin') ?>" class="topbar-identity text-decoration-none">
                     <img src="<?= esc($logoSrc) ?>" alt="Logo Kabupaten Donggala">
                     <span>
-                        <strong>eLabel Donggala</strong>
+                        <strong>ArsipKu Donggala</strong>
                         <span>Pemerintah Kabupaten</span>
                     </span>
                 </a>
@@ -752,7 +752,7 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link position-relative" href="<?= site_url('admin/loans') ?>" title="Notifikasi Peminjaman">
+                <a class="nav-link position-relative" href="<?= site_url('admin/loans') ?>" title="Notifikasi Permintaan Scan">
                     <i class="far fa-bell" style="font-size:1rem; line-height:1;"></i>
                     <?php if ($pendingLoanCount > 0): ?>
                         <span class="badge badge-danger navbar-badge" style="font-size:0.6rem; padding:2px 5px; border-radius:999px;"><?= esc((string) $pendingLoanCount) ?></span>
@@ -795,7 +795,7 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <a href="<?= site_url('admin') ?>" class="brand-link">
             <img src="<?= esc($logoSrc) ?>" alt="Logo Kabupaten Donggala" class="brand-image img-circle elevation-3" style="opacity: .96">
-            <span class="brand-text font-weight-bold">eLabel<br><small>Kabupaten Donggala</small></span>
+            <span class="brand-text font-weight-bold">ArsipKu<br><small>Kabupaten Donggala</small></span>
         </a>
         <div class="sidebar">
             <nav class="mt-2">
@@ -882,7 +882,7 @@
                             <li class="nav-item">
                                 <a href="<?= site_url('admin/loans') ?>" class="nav-link <?= ($activeMenu ?? '') === 'loans' ? 'active' : '' ?>">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Peminjaman</p>
+                                    <p>Permintaan Scan</p>
                                 </a>
                             </li>
                         </ul>
@@ -905,7 +905,7 @@
     </div>
 
     <footer class="main-footer">
-        <strong>eLabel Admin Panel</strong>
+        <strong>ArsipKu Admin Panel</strong>
         <div class="float-right d-none d-sm-inline-block footer-version">
             <b>Version</b> 1.0.0
         </div>

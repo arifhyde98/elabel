@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Data Box Sertipikat | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Data Box Sertipikat | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <style>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | eLabel</title>
+    <title>Login | ArsipKu</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
@@ -221,7 +221,7 @@
     <div class="branding-side">
         <div class="branding-content">
             <img src="<?= esc($logoSrc) ?>" alt="Logo Kabupaten Donggala">
-            <h1>eLabel</h1>
+            <h1>ArsipKu</h1>
             <p>Pemerintah Kabupaten Donggala<br>Badan Pengelolaan Keuangan dan Aset Daerah</p>
         </div>
     </div>
@@ -231,7 +231,7 @@
         <div class="login-card">
             <div class="login-header">
                 <h2>Selamat Datang</h2>
-                <p>Masuk ke Sistem Informasi eLabel</p>
+                <p>Masuk ke Sistem Informasi ArsipKu</p>
             </div>
 
             <?= view('partials/alerts') ?>

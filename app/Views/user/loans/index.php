@@ -1,11 +1,11 @@
 <?= $this->extend('layouts/userlte') ?>
 
-<?= $this->section('title') ?>Peminjaman | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Permintaan Scan | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">
     <div class="container-fluid">
-        <h1>Riwayat Peminjaman</h1>
+        <h1>Riwayat Permintaan Scan</h1>
     </div>
 </section>
 <section class="content">
@@ -27,7 +27,7 @@
                     <tbody>
                     <?php if (empty($items)): ?>
                         <tr>
-                            <td colspan="6" class="text-center">Belum ada peminjaman.</td>
+                            <td colspan="6" class="text-center">Belum ada permintaan scan.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($items as $item): ?>

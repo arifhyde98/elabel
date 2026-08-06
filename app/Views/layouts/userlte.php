@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= esc($this->renderSection('title') ?: 'User Dashboard | eLabel') ?></title>
+    <title><?= esc($this->renderSection('title') ?: 'User Dashboard | ArsipKu') ?></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -123,7 +123,7 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <a href="<?= site_url('dashboard') ?>" class="brand-link">
             <i class="fas fa-tags ml-2 mr-2"></i>
-            <span class="brand-text font-weight-light">eLabel User</span>
+            <span class="brand-text font-weight-light">ArsipKu User</span>
         </a>
         <div class="sidebar">
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -151,7 +151,7 @@
                     <li class="nav-item">
                         <a href="<?= site_url('loans') ?>" class="nav-link <?= ($activeMenu ?? '') === 'loans' ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-file-signature"></i>
-                            <p>Peminjaman</p>
+                            <p>Permintaan Scan</p>
                         </a>
                     </li>
                 </ul>
@@ -164,7 +164,7 @@
     </div>
 
     <footer class="main-footer">
-        <strong>eLabel User Panel</strong>
+        <strong>ArsipKu User Panel</strong>
     </footer>
 </div>
 

@@ -1,13 +1,13 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Peminjaman | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Permintaan Scan | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <h1>Daftar Peminjaman</h1>
+        <h1>Daftar Permintaan Scan</h1>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-manual-loan">
-            <i class="fas fa-plus"></i> <span class="btn-text">Peminjaman</span>
+            <i class="fas fa-plus"></i> <span class="btn-text">Permintaan Scan</span>
         </button>
     </div>
 </section>
@@ -67,10 +67,7 @@
                                             <button type="submit" class="btn btn-danger btn-xs">Tolak</button>
                                         </form>
                                     <?php elseif ($item['status'] === 'Disetujui'): ?>
-                                        <form action="<?= site_url('admin/loans/' . $item['id'] . '/return') ?>" method="post" class="d-inline" onsubmit="return confirm('Tandai dokumen sudah dikembalikan?');">
-                                            <?= csrf_field() ?>
-                                            <button type="submit" class="btn btn-primary btn-xs">Dikembalikan</button>
-                                        </form>
+                                        <span class="badge badge-success">File dikirim manual</span>
                                     <?php else: ?>
                                         <span class="badge badge-secondary">Selesai</span>
                                     <?php endif; ?>
@@ -90,7 +87,7 @@
         <form action="<?= site_url('admin/loans/manual') ?>" method="post" class="modal-content">
             <?= csrf_field() ?>
             <div class="modal-header">
-                <h5 class="modal-title" id="modalManualLoanLabel">Peminjaman Manual</h5>
+                <h5 class="modal-title" id="modalManualLoanLabel">Permintaan Scan Manual</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -98,7 +95,7 @@
             <div class="modal-body">
                 <?php if (empty($availableBpkb)): ?>
                     <div class="alert alert-info mb-0">
-                        Tidak ada BPKB berstatus tersedia untuk dipinjam.
+                        Tidak ada BPKB berstatus tersedia untuk diminta file scan.
                     </div>
                 <?php else: ?>
                     <div class="form-group">
@@ -118,7 +115,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="manual_requester_name">Nama Peminjam</label>
+                                <label for="manual_requester_name">Nama Pemohon</label>
                                 <input type="text" name="requester_name" id="manual_requester_name" class="form-control" value="<?= old('requester_name') ?>" required>
                             </div>
                         </div>
@@ -155,7 +152,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary" <?= empty($availableBpkb) ? 'disabled' : '' ?>>Simpan Peminjaman</button>
+                <button type="submit" class="btn btn-primary" <?= empty($availableBpkb) ? 'disabled' : '' ?>>Simpan Permintaan Scan</button>
             </div>
         </form>
     </div>

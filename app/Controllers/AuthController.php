@@ -152,7 +152,7 @@ class AuthController extends BaseController
 
         $emailService = service('email');
         $emailService->setTo($user['email']);
-        $emailService->setSubject('Reset Password eLabel');
+        $emailService->setSubject('Reset Password ArsipKu');
         $emailService->setMessage(
             "Halo {$user['name']},\n\n" .
             "Klik link berikut untuk reset password Anda:\n{$resetLink}\n\n" .

@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/adminlte') ?>
 
 <?= $this->section('title') ?>
-Admin Dashboard | eLabel
+Admin Dashboard | ArsipKu
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
@@ -408,7 +408,7 @@ Admin Dashboard | eLabel
             <div>
                 <div class="dash-hero-kicker"><i class="fas fa-landmark"></i> Dashboard Admin</div>
                 <h2>Pemerintah Kabupaten Donggala</h2>
-                <p>Sistem Informasi Manajemen Label Digital (eLabel) - BPKAD Bidang Aset</p>
+                <p>Sistem Informasi Manajemen Label Digital (ArsipKu) - BPKAD Bidang Aset</p>
             </div>
             <span class="dash-chip"><i class="fas fa-shield-alt mr-1"></i> Sistem Arsip</span>
         </div>
@@ -486,7 +486,7 @@ Admin Dashboard | eLabel
                         <div class="value"><?= esc((string) $bpkbDeletedCount) ?></div>
                     </div>
                     <div class="dash-stat">
-                        <div class="label">Jumlah Peminjaman</div>
+                        <div class="label">Jumlah Permintaan Scan</div>
                         <div class="value"><?= esc((string) $loanCount) ?></div>
                     </div>
                 </div>
@@ -593,7 +593,7 @@ Admin Dashboard | eLabel
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Box', 'BPKB', 'Sertipikat', 'Surat Penyerahan', 'BPKB Keluar', 'Peminjaman'],
+                labels: ['Box', 'BPKB', 'Sertipikat', 'Surat Penyerahan', 'BPKB Keluar', 'Permintaan Scan'],
                 datasets: [
                     {
                         label: 'Jumlah Data',

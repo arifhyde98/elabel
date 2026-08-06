@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Edit BPKB Keluar | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Edit BPKB Keluar | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">

@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/userlte') ?>
 
-<?= $this->section('title') ?>Daftar BPKB | eLabel<?= $this->endSection() ?>
+<?= $this->section('title') ?>Daftar BPKB | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="content-header">
@@ -21,7 +21,7 @@
                             <th>Nomor Plat</th>
                             <th>Status</th>
                             <th>File</th>
-                            <th>Peminjaman</th>
+                            <th>Permintaan Scan</th>
                         </tr>
                     </thead>
                     <tbody>

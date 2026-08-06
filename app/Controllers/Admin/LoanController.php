@@ -63,7 +63,7 @@ class LoanController extends BaseController
         $item   = $this->bpkb->find($bpkbId);
 
         if (! $item || $item['status'] !== 'Tersedia') {
-            return redirect()->back()->withInput()->with('error', 'BPKB tidak tersedia untuk dipinjam.');
+            return redirect()->back()->withInput()->with('error', 'BPKB tidak tersedia untuk diminta scan.');
         }
 
         $db = db_connect();
@@ -81,40 +81,36 @@ class LoanController extends BaseController
             'approved_by'      => (int) session()->get('user_id'),
             'approved_at'      => date('Y-m-d H:i:s'),
             'status'           => 'Disetujui',
-            'note'             => (string) $this->request->getPost('note') ?: 'Peminjaman manual oleh admin.',
+            'note'             => (string) $this->request->getPost('note') ?: 'Permintaan scan manual oleh admin.',
         ], true);
-
-        $this->bpkb->update($bpkbId, [
-            'status' => 'Dipinjam',
-        ]);
 
         $this->histories->insert([
             'loan_id'    => (int) $loanId,
             'status'     => 'Disetujui',
             'changed_by' => (int) session()->get('user_id'),
             'changed_at' => date('Y-m-d H:i:s'),
-            'note'       => 'Peminjaman manual oleh admin.',
+            'note'       => 'Permintaan scan manual oleh admin.',
         ]);
 
         $db->transComplete();
 
         if (! $db->transStatus()) {
-            return redirect()->back()->withInput()->with('error', 'Peminjaman manual gagal disimpan.');
+            return redirect()->back()->withInput()->with('error', 'Permintaan scan manual gagal disimpan.');
         }
-        $this->logActivity('create', 'Peminjaman', 'Menambahkan peminjaman manual untuk BPKB ' . ($item['plate_number'] ?? '-') . '.', 'loans', (int) $loanId);
+        $this->logActivity('create', 'Permintaan Scan', 'Menambahkan permintaan scan manual untuk BPKB ' . ($item['plate_number'] ?? '-') . '.', 'loans', (int) $loanId);
 
-        return redirect()->to(site_url('admin/loans'))->with('success', 'Peminjaman manual berhasil ditambahkan.');
+        return redirect()->to(site_url('admin/loans'))->with('success', 'Permintaan scan manual berhasil ditambahkan.');
     }
 
     public function approve(int $id)
     {
         $loan = $this->loans->find($id);
         if (! $loan) {
-            return redirect()->to(site_url('admin/loans'))->with('error', 'Data peminjaman tidak ditemukan.');
+            return redirect()->to(site_url('admin/loans'))->with('error', 'Data permintaan scan tidak ditemukan.');
         }
 
         if ($loan['status'] !== 'Menunggu') {
-            return redirect()->to(site_url('admin/loans'))->with('error', 'Status peminjaman sudah diproses.');
+            return redirect()->to(site_url('admin/loans'))->with('error', 'Status permintaan scan sudah diproses.');
         }
 
         $this->loans->update($id, [
@@ -123,30 +119,26 @@ class LoanController extends BaseController
             'approved_at' => date('Y-m-d H:i:s'),
         ]);
 
-        $this->bpkb->update($loan['bpkb_id'], [
-            'status' => 'Dipinjam',
-        ]);
-
         $this->histories->insert([
             'loan_id'    => $id,
             'status'     => 'Disetujui',
             'changed_by' => (int) session()->get('user_id'),
             'changed_at' => date('Y-m-d H:i:s'),
         ]);
-        $this->logActivity('approve', 'Peminjaman', 'Menyetujui peminjaman BPKB ID ' . $loan['bpkb_id'] . '.', 'loans', $id);
+        $this->logActivity('approve', 'Permintaan Scan', 'Menyetujui permintaan scan BPKB ID ' . $loan['bpkb_id'] . '.', 'loans', $id);
 
-        return redirect()->to(site_url('admin/loans'))->with('success', 'Peminjaman disetujui.');
+        return redirect()->to(site_url('admin/loans'))->with('success', 'Permintaan Scan disetujui.');
     }
 
     public function reject(int $id)
     {
         $loan = $this->loans->find($id);
         if (! $loan) {
-            return redirect()->to(site_url('admin/loans'))->with('error', 'Data peminjaman tidak ditemukan.');
+            return redirect()->to(site_url('admin/loans'))->with('error', 'Data permintaan scan tidak ditemukan.');
         }
 
         if ($loan['status'] !== 'Menunggu') {
-            return redirect()->to(site_url('admin/loans'))->with('error', 'Status peminjaman sudah diproses.');
+            return redirect()->to(site_url('admin/loans'))->with('error', 'Status permintaan scan sudah diproses.');
         }
 
         $note = (string) $this->request->getPost('note');
@@ -165,40 +157,9 @@ class LoanController extends BaseController
             'changed_at' => date('Y-m-d H:i:s'),
             'note'       => $note !== '' ? $note : null,
         ]);
-        $this->logActivity('reject', 'Peminjaman', 'Menolak peminjaman BPKB ID ' . $loan['bpkb_id'] . '.', 'loans', $id);
+        $this->logActivity('reject', 'Permintaan Scan', 'Menolak permintaan scan BPKB ID ' . $loan['bpkb_id'] . '.', 'loans', $id);
 
-        return redirect()->to(site_url('admin/loans'))->with('success', 'Peminjaman ditolak.');
+        return redirect()->to(site_url('admin/loans'))->with('success', 'Permintaan Scan ditolak.');
     }
 
-    public function markReturned(int $id)
-    {
-        $loan = $this->loans->find($id);
-        if (! $loan) {
-            return redirect()->to(site_url('admin/loans'))->with('error', 'Data peminjaman tidak ditemukan.');
-        }
-
-        if ($loan['status'] !== 'Disetujui') {
-            return redirect()->to(site_url('admin/loans'))->with('error', 'Peminjaman belum disetujui atau sudah selesai.');
-        }
-
-        $this->loans->update($id, [
-            'status'      => 'Selesai',
-            'approved_by' => (int) session()->get('user_id'),
-            'approved_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        $this->bpkb->update($loan['bpkb_id'], [
-            'status' => 'Tersedia',
-        ]);
-
-        $this->histories->insert([
-            'loan_id'    => $id,
-            'status'     => 'Selesai',
-            'changed_by' => (int) session()->get('user_id'),
-            'changed_at' => date('Y-m-d H:i:s'),
-        ]);
-        $this->logActivity('return', 'Peminjaman', 'Menandai pengembalian BPKB ID ' . $loan['bpkb_id'] . '.', 'loans', $id);
-
-        return redirect()->to(site_url('admin/loans'))->with('success', 'Dokumen sudah dikembalikan.');
-    }
 }
