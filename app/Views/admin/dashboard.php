@@ -255,11 +255,11 @@ Admin Dashboard | ArsipKu
     .activity-cleanup button:hover {
         background: #fee2e2;
     }
-    .activity-list::before {
+    .activity-item::before {
         content: "";
         position: absolute;
-        top: 8px;
-        bottom: 8px;
+        top: 34px;
+        bottom: 0;
         left: 17px;
         width: 2px;
         background: linear-gradient(180deg, #d8a928, #bfdbfe);
@@ -274,6 +274,9 @@ Admin Dashboard | ArsipKu
     }
     .activity-item:last-child {
         padding-bottom: 0;
+    }
+    .activity-item:last-child::before {
+        display: none;
     }
     .activity-icon {
         position: relative;
@@ -302,6 +305,18 @@ Admin Dashboard | ArsipKu
     }
     .activity-icon.update {
         background: #1d4ed8;
+    }
+    .activity-icon.approve {
+        background: #059669;
+    }
+    .activity-icon.reject {
+        background: #b91c1c;
+    }
+    .activity-icon.return {
+        background: #0f766e;
+    }
+    .activity-icon.toggle {
+        background: #7c3aed;
     }
     .activity-icon.delete {
         background: #dc2626;
@@ -367,12 +382,30 @@ Admin Dashboard | ArsipKu
     @media (max-width: 991.98px) {
         .dash-grid {
             grid-template-columns: 1fr;
+            min-width: 0;
+        }
+        .dash-card,
+        .dash-hero,
+        .chart-box,
+        .mini-card,
+        .activity-content {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .chart-box canvas {
+            max-width: 100% !important;
+            width: 100% !important;
         }
         .dash-mini {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
     @media (max-width: 575.98px) {
+        .content-header .container-fluid,
+        .content-wrapper > .content {
+            padding-left: 0.55rem;
+            padding-right: 0.55rem;
+        }
         .dash-hero {
             align-items: flex-start;
             flex-direction: column;
@@ -590,7 +623,7 @@ Admin Dashboard | ArsipKu
                 ctx.restore();
             }
         };
-        new Chart(ctx, {
+        var dashboardChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Box', 'BPKB', 'Sertipikat', 'Surat Penyerahan', 'BPKB Keluar', 'Permintaan Scan'],
@@ -640,6 +673,19 @@ Admin Dashboard | ArsipKu
             },
             plugins: [valueLabelPlugin]
         });
+        var resizeTimer = null;
+        var queueChartResize = function () {
+            window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(function () {
+                dashboardChart.resize();
+                window.setTimeout(function () {
+                    dashboardChart.resize();
+                }, 260);
+            }, 220);
+        };
+
+        window.addEventListener('resize', queueChartResize);
+        window.addEventListener('orientationchange', queueChartResize);
     });
 </script>
 <?= $this->endSection() ?>

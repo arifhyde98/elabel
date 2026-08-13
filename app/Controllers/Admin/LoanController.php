@@ -20,26 +20,38 @@ class LoanController extends BaseController
         $this->bpkb      = new BpkbModel();
     }
 
-    public function index(): string
+    public function index(string $documentType = 'bpkb'): string
     {
-        $items = $this->loans
-            ->select('loans.*, bpkb.plate_number, bpkb.year as bpkb_year, boxes.box_code, COALESCE(users.name, loans.requester_name) as requester_name')
-            ->join('bpkb', 'bpkb.id = loans.bpkb_id')
-            ->join('boxes', 'boxes.id = bpkb.box_id')
-            ->join('users', 'users.id = loans.requester_id', 'left')
-            ->orderBy('loans.requested_at', 'desc')
-            ->findAll();
-        $availableBpkb = $this->bpkb
-            ->select('bpkb.id, bpkb.plate_number, bpkb.no_bpkb, bpkb.year, bpkb.vehicle_type, boxes.box_code')
-            ->join('boxes', 'boxes.id = bpkb.box_id')
-            ->where('bpkb.status', 'Tersedia')
-            ->orderBy('bpkb.plate_number', 'asc')
-            ->findAll();
+        $documentType = strtolower($documentType);
+        if (! in_array($documentType, ['bpkb', 'sertifikat'], true)) {
+            $documentType = 'bpkb';
+        }
+
+        $items         = [];
+        $availableBpkb = [];
+
+        if ($documentType === 'bpkb') {
+            $items = $this->loans
+                ->select('loans.*, bpkb.plate_number, bpkb.year as bpkb_year, boxes.box_code, COALESCE(users.name, loans.requester_name) as requester_name')
+                ->join('bpkb', 'bpkb.id = loans.bpkb_id')
+                ->join('boxes', 'boxes.id = bpkb.box_id')
+                ->join('users', 'users.id = loans.requester_id', 'left')
+                ->orderBy('loans.requested_at', 'desc')
+                ->findAll();
+            $availableBpkb = $this->bpkb
+                ->select('bpkb.id, bpkb.plate_number, bpkb.no_bpkb, bpkb.year, bpkb.vehicle_type, boxes.box_code')
+                ->join('boxes', 'boxes.id = bpkb.box_id')
+                ->where('bpkb.status', 'Tersedia')
+                ->orderBy('bpkb.plate_number', 'asc')
+                ->findAll();
+        }
 
         return view('admin/loans/index', [
-            'items'         => $items,
-            'availableBpkb' => $availableBpkb,
-            'activeMenu'    => 'loans',
+            'items'          => $items,
+            'availableBpkb'  => $availableBpkb,
+            'documentType'   => $documentType,
+            'documentLabel'  => $documentType === 'sertifikat' ? 'Sertipikat Tanah' : 'BPKB',
+            'activeMenu'     => 'loans',
         ]);
     }
 
@@ -160,6 +172,43 @@ class LoanController extends BaseController
         $this->logActivity('reject', 'Permintaan Scan', 'Menolak permintaan scan BPKB ID ' . $loan['bpkb_id'] . '.', 'loans', $id);
 
         return redirect()->to(site_url('admin/loans'))->with('success', 'Permintaan Scan ditolak.');
+    }
+
+    public function delete(int $id)
+    {
+        $loan = $this->loans->find($id);
+        if (! $loan) {
+            return redirect()->back()->with('error', 'Data permintaan scan tidak ditemukan.');
+        }
+
+        $requestedAt = ! empty($loan['requested_at']) ? strtotime((string) $loan['requested_at']) : false;
+        if (! $requestedAt || $requestedAt > strtotime('-7 days')) {
+            return redirect()->back()->with('error', 'Permintaan scan hanya bisa dihapus setelah lebih dari 7 hari.');
+        }
+
+        $scanLabel = 'permintaan scan';
+        if (! empty($loan['bpkb_id'])) {
+            $bpkb = $this->bpkb->find((int) $loan['bpkb_id']);
+            $scanLabel = 'permintaan scan BPKB ' . (string) ($bpkb['plate_number'] ?? 'ID ' . $loan['bpkb_id']);
+        } elseif (! empty($loan['sertifikat_id'])) {
+            $scanLabel = 'permintaan scan Sertipikat Tanah ' . (string) ($loan['no_sertipikat'] ?? 'ID ' . $loan['sertifikat_id']);
+        }
+
+        $db = db_connect();
+        $db->transStart();
+
+        $this->histories->where('loan_id', $id)->delete();
+        $this->loans->delete($id);
+
+        $db->transComplete();
+
+        if (! $db->transStatus()) {
+            return redirect()->back()->with('error', 'Permintaan scan gagal dihapus.');
+        }
+
+        $this->logActivity('delete', 'Permintaan Scan', 'Menghapus ' . $scanLabel . ' yang lebih dari 7 hari.', 'loans', $id);
+
+        return redirect()->back()->with('success', 'Permintaan scan berhasil dihapus.');
     }
 
 }

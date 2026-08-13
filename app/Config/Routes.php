@@ -142,9 +142,12 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
         $routes->post('surat-penyerahan/(:num)/delete', 'Admin\SuratPenyerahanController::delete/$1');
 
         $routes->get('loans', 'Admin\LoanController::index');
+        $routes->get('loans/bpkb', 'Admin\LoanController::index/bpkb');
+        $routes->get('loans/sertifikat', 'Admin\LoanController::index/sertifikat');
         $routes->post('loans/manual', 'Admin\LoanController::storeManual');
         $routes->post('loans/(:num)/approve', 'Admin\LoanController::approve/$1');
         $routes->post('loans/(:num)/reject', 'Admin\LoanController::reject/$1');
+        $routes->post('loans/(:num)/delete', 'Admin\LoanController::delete/$1');
 
         $routes->get('users', 'Admin\UserController::index');
         $routes->get('users/create', 'Admin\UserController::create');

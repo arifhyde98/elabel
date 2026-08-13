@@ -100,6 +100,18 @@
         max-width: 110px;
         white-space: nowrap;
     }
+    .aksi-cell {
+        white-space: nowrap;
+    }
+    .aksi-cell .btn,
+    .aksi-cell form {
+        display: inline-block;
+        vertical-align: top;
+        margin-bottom: 0.2rem;
+    }
+    .aksi-cell form {
+        margin-right: 0;
+    }
     .vehicle-tabs {
         display: flex;
         gap: 0.6rem;
@@ -267,12 +279,17 @@
                                 <td class="bpkb-col-merek"><?= esc((string) ($item['merek'] ?? '-')) ?></td>
                                 <td class="bpkb-col-year"><?= esc((string) $item['year']) ?></td>
                                 <td class="bpkb-col-jenis"><?= esc(strtoupper((string) ($item['vehicle_type'] ?? '-'))) ?></td>
-                                <td class="bpkb-col-aksi">
-                                    <a href="<?= site_url('admin/bpkb/' . $item['id'] . '/edit') ?>" class="btn btn-warning btn-xs">
-                                        <i class="fas fa-edit"></i> <span class="btn-text">Edit</span>
+                                <td class="bpkb-col-aksi aksi-cell">
+                                    <a href="<?= site_url('admin/bpkb/' . $item['id']) ?>" class="btn btn-info btn-xs" aria-label="Lihat Detail" title="Lihat Detail">
+                                        <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="<?= site_url('admin/bpkb/' . $item['id']) ?>" class="btn btn-info btn-xs">
-                                        <i class="fas fa-eye"></i> <span class="btn-text">View</span>
+                                    <?php if (! empty($item['pdf_path'])): ?>
+                                        <a href="<?= site_url('admin/bpkb/' . $item['id'] . '/view') ?>" target="_blank" class="btn btn-info btn-xs" aria-label="Lihat PDF" title="Lihat PDF">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                    <a href="<?= site_url('admin/bpkb/' . $item['id'] . '/edit') ?>" class="btn btn-warning btn-xs" aria-label="Edit Data" title="Edit Data">
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                 </td>
                             </tr>

@@ -254,20 +254,20 @@
                                 <td class="lokasi-column"><div class="lokasi-cell"><?= esc((string) ($item['lokasi'] ?? '-')) ?></div></td>
                                 <td class="dinas-column"><div class="dinas-cell"><?= esc((string) ($item['dinas'] ?? '-')) ?></div></td>
                                 <td class="aksi-cell">
-                                    <a href="<?= site_url('admin/sertifikat/' . $item['id']) ?>" class="btn btn-info btn-xs">
+                                    <a href="<?= site_url('admin/sertifikat/' . $item['id']) ?>" class="btn btn-info btn-xs" aria-label="Lihat Detail" title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <?php if (! empty($item['pdf_path'])): ?>
-                                        <a href="<?= site_url('admin/sertifikat/' . $item['id'] . '/view') ?>" target="_blank" class="btn btn-info btn-xs">
+                                        <a href="<?= site_url('admin/sertifikat/' . $item['id'] . '/view') ?>" target="_blank" class="btn btn-info btn-xs" aria-label="Lihat PDF" title="Lihat PDF">
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
                                     <?php endif; ?>
-                                    <a href="<?= site_url('admin/sertifikat/' . $item['id'] . '/edit') ?>" class="btn btn-warning btn-xs">
+                                    <a href="<?= site_url('admin/sertifikat/' . $item['id'] . '/edit') ?>" class="btn btn-warning btn-xs" aria-label="Edit Data" title="Edit Data">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="<?= site_url('admin/sertifikat/' . $item['id'] . '/delete') ?>" method="post" class="d-inline" onsubmit="return confirm('Hapus data sertipikat ini?');">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="btn btn-danger btn-xs">
+                                        <button type="submit" class="btn btn-danger btn-xs" aria-label="Hapus Data" title="Hapus Data">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

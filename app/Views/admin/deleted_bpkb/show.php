@@ -46,6 +46,9 @@
                     <dt class="col-sm-4">Warna</dt>
                     <dd class="col-sm-8"><?= esc((string) ($item['warna'] ?? '-')) ?></dd>
 
+                    <dt class="col-sm-4">Pengguna</dt>
+                    <dd class="col-sm-8"><?= esc((string) ($item['pengguna'] ?? '-')) ?></dd>
+
                     <dt class="col-sm-4">Tahun Pembuatan</dt>
                     <dd class="col-sm-8"><?= esc((string) ($item['year'] ?? '-')) ?></dd>
 

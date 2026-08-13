@@ -646,6 +646,22 @@
             }
         }
         @media (max-width: 767.98px) {
+            html,
+            body,
+            .wrapper {
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+            .content-wrapper,
+            .main-footer {
+                margin-left: 0 !important;
+                max-width: 100vw;
+                width: 100% !important;
+            }
+            .content-wrapper .container-fluid {
+                min-width: 0;
+                width: 100%;
+            }
             .brand-link {
                 min-height: 60px;
             }
@@ -930,10 +946,31 @@
         var syncToggle = function () {
             toggle.checked = document.body.classList.contains('sidebar-collapse');
         };
+        var normalizeMobileSidebar = function () {
+            if (!window.matchMedia('(max-width: 767.98px)').matches) {
+                syncToggle();
+                return;
+            }
+
+            document.body.classList.remove('sidebar-open', 'sidebar-collapse');
+            syncToggle();
+
+            if (window.jQuery && jQuery.fn.Layout) {
+                jQuery('body').Layout('fixLayoutHeight');
+            }
+        };
+        var normalizeTimer = null;
+        var queueNormalizeMobileSidebar = function () {
+            window.clearTimeout(normalizeTimer);
+            normalizeTimer = window.setTimeout(normalizeMobileSidebar, 180);
+        };
+
         syncToggle();
         pushmenuLink.addEventListener('click', function () {
             setTimeout(syncToggle, 0);
         });
+        window.addEventListener('resize', queueNormalizeMobileSidebar);
+        window.addEventListener('orientationchange', queueNormalizeMobileSidebar);
     });
 </script>
 <?= $this->renderSection('scripts') ?>

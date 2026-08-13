@@ -1,14 +1,65 @@
 <?= $this->extend('layouts/adminlte') ?>
 
-<?= $this->section('title') ?>Permintaan Scan | ArsipKu<?= $this->endSection() ?>
+<?= $this->section('title') ?>Permintaan Scan <?= esc((string) ($documentLabel ?? 'BPKB')) ?> | ArsipKu<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<style>
+    .scan-tabs {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .scan-tab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.22rem;
+        width: 95px;
+        min-width: 95px;
+        min-height: 54px;
+        padding: 0.32rem 0.5rem;
+        border-radius: 8px;
+        border: 2px solid #cbd5e1;
+        background: #fff;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.62rem;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+    .scan-tab i {
+        font-size: 0.8rem;
+    }
+    .scan-tab.active,
+    .scan-tab:hover {
+        border-color: #3b82f6;
+        color: #1d4ed8;
+        box-shadow: 0 10px 22px rgba(59, 130, 246, 0.2);
+    }
+</style>
 <section class="content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <h1>Daftar Permintaan Scan</h1>
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-manual-loan">
-            <i class="fas fa-plus"></i> <span class="btn-text">Permintaan Scan</span>
-        </button>
+        <h1>Daftar Permintaan Scan <?= esc((string) ($documentLabel ?? 'BPKB')) ?></h1>
+        <?php if (($documentType ?? 'bpkb') === 'bpkb'): ?>
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-manual-loan">
+                <i class="fas fa-plus"></i> <span class="btn-text">Permintaan Scan</span>
+            </button>
+        <?php endif; ?>
+    </div>
+    <div class="container-fluid mt-2">
+        <div class="scan-tabs" role="group" aria-label="Filter jenis dokumen permintaan scan">
+            <a href="<?= site_url('admin/loans/bpkb') ?>" class="scan-tab <?= ($documentType ?? 'bpkb') === 'bpkb' ? 'active' : '' ?>">
+                <i class="fas fa-id-card"></i>
+                BPKB
+            </a>
+            <a href="<?= site_url('admin/loans/sertifikat') ?>" class="scan-tab <?= ($documentType ?? '') === 'sertifikat' ? 'active' : '' ?>">
+                <i class="fas fa-file-contract"></i>
+                Sertipikat
+            </a>
+        </div>
     </div>
 </section>
 <section class="content">
@@ -18,33 +69,52 @@
             <div class="card-body table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nomor Plat</th>
-                            <th>Box</th>
-                            <th>Tahun</th>
-                            <th>Pemohon</th>
-                            <th>Tanggal Pengajuan</th>
-                            <th>Status</th>
-                            <th>Catatan</th>
-                            <th>Aksi</th>
-                        </tr>
+                        <?php if (($documentType ?? 'bpkb') === 'sertifikat'): ?>
+                            <tr>
+                                <th>No</th>
+                                <th>No. Sertipikat</th>
+                                <th>Box</th>
+                                <th>Lokasi</th>
+                                <th>Pemohon</th>
+                                <th>Tanggal Pengajuan</th>
+                                <th>Status</th>
+                                <th>Catatan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        <?php else: ?>
+                            <tr>
+                                <th>No</th>
+                                <th>Nomor Plat</th>
+                                <th>Box</th>
+                                <th>Tahun</th>
+                                <th>Pemohon</th>
+                                <th>Tanggal Pengajuan</th>
+                                <th>Status</th>
+                                <th>Catatan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        <?php endif; ?>
                     </thead>
                     <tbody>
                     <?php if (empty($items)): ?>
                         <tr>
-                            <td colspan="9" class="text-center">Belum ada pengajuan.</td>
+                            <td colspan="9" class="text-center">Belum ada pengajuan <?= esc(strtolower((string) ($documentLabel ?? 'BPKB'))) ?>.</td>
                         </tr>
                     <?php else: ?>
                         <?php $i = 1; ?>
                         <?php foreach ($items as $item): ?>
+                            <?php
+                                $isSertifikat = ($documentType ?? 'bpkb') === 'sertifikat';
+                                $requestedAt = ! empty($item['requested_at']) ? strtotime((string) $item['requested_at']) : false;
+                                $canDeleteOldRequest = $requestedAt && $requestedAt <= strtotime('-7 days');
+                            ?>
                             <tr>
                                 <td><?= $i++ ?></td>
-                                <td><?= esc((string) $item['plate_number']) ?></td>
+                                <td><?= esc((string) ($isSertifikat ? ($item['no_sertipikat'] ?? '-') : ($item['plate_number'] ?? '-'))) ?></td>
                                 <td><?= esc((string) $item['box_code']) ?></td>
-                                <td><?= esc((string) $item['bpkb_year']) ?></td>
+                                <td><?= esc((string) ($isSertifikat ? ($item['lokasi'] ?? '-') : ($item['bpkb_year'] ?? '-'))) ?></td>
                                 <td>
-                                    <div><?= esc((string) $item['requester_name']) ?></div>
+                                    <div><?= esc((string) ($item['requester_name'] ?? '-')) ?></div>
                                     <?php if (! empty($item['requester_phone'])): ?>
                                         <small class="text-muted"><?= esc((string) $item['requester_phone']) ?></small>
                                     <?php endif; ?>
@@ -70,6 +140,14 @@
                                         <span class="badge badge-success">File dikirim manual</span>
                                     <?php else: ?>
                                         <span class="badge badge-secondary">Selesai</span>
+                                    <?php endif; ?>
+                                    <?php if ($canDeleteOldRequest): ?>
+                                        <form action="<?= site_url('admin/loans/' . $item['id'] . '/delete') ?>" method="post" class="mt-1" onsubmit="return confirm('Hapus permintaan scan ini?');">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-danger btn-xs" aria-label="Hapus permintaan scan" title="Hapus permintaan scan">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     <?php endif; ?>
                                 </td>
                             </tr>
