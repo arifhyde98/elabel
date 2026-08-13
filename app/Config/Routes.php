@@ -136,6 +136,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
         $routes->post('surat-penyerahan/import', 'Admin\SuratPenyerahanController::import');
         $routes->get('surat-penyerahan/export', 'Admin\SuratPenyerahanController::export');
         $routes->get('surat-penyerahan/import-template', 'Admin\SuratPenyerahanController::downloadImportTemplate');
+        $routes->get('surat-penyerahan/(:num)/pdf', 'Admin\SuratPenyerahanController::pdf/$1');
         $routes->get('surat-penyerahan/(:num)', 'Admin\SuratPenyerahanController::show/$1');
         $routes->get('surat-penyerahan/(:num)/edit', 'Admin\SuratPenyerahanController::edit/$1');
         $routes->post('surat-penyerahan/(:num)', 'Admin\SuratPenyerahanController::update/$1');

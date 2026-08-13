@@ -16,10 +16,15 @@ class SuratPenyerahanModel extends Model
         'nibar',
         'no_surat',
         'status_penggunaan',
+        'spesifikasi',
+        'jenis_penyerahan',
         'luas',
-        'tahun',
+        'tanggal_perolehan',
+        'alamat',
         'lokasi',
+        'dinas',
         'pemberi_hibah',
+        'pdf_path',
         'box_id',
     ];
 
@@ -29,7 +34,7 @@ class SuratPenyerahanModel extends Model
     protected array $casts = [
         'id'         => 'integer',
         'luas'       => 'float',
-        'tahun'      => 'integer',
+        'tanggal_perolehan' => 'date',
         'box_id'     => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -44,10 +49,15 @@ class SuratPenyerahanModel extends Model
         'nibar'             => 'permit_empty|max_length[100]',
         'no_surat'          => 'required|max_length[150]',
         'status_penggunaan' => 'permit_empty|max_length[150]',
+        'spesifikasi'       => 'permit_empty|max_length[255]',
+        'jenis_penyerahan'  => 'permit_empty|max_length[150]',
         'luas'              => 'permit_empty|decimal',
-        'tahun'             => 'permit_empty|integer',
+        'tanggal_perolehan' => 'permit_empty|valid_date',
+        'alamat'            => 'permit_empty|max_length[255]',
         'lokasi'            => 'permit_empty|max_length[255]',
+        'dinas'             => 'permit_empty|max_length[150]',
         'pemberi_hibah'     => 'permit_empty|max_length[150]',
+        'pdf_path'          => 'permit_empty|max_length[255]',
         'box_id'            => 'permit_empty|integer',
     ];
 }

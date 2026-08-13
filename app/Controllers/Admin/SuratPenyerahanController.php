@@ -46,6 +46,12 @@ class SuratPenyerahanController extends BaseController
 
         $payload = $this->suratPenyerahanPayload();
         $payload['box_id'] = $this->resolveSuratPenyerahanBoxId($payload['lokasi'] ?? null);
+        try {
+            $payload['pdf_path'] = $this->storeUploadedPdf($this->request->getFile('pdf'), $payload);
+        } catch (\Throwable $exception) {
+            return redirect()->back()->withInput()->with('error', $this->uploadPdfErrorMessage($exception));
+        }
+
         $newId = $this->suratPenyerahan->insert($payload);
         $this->logActivity('create', 'Surat Penyerahan', 'Menambahkan surat penyerahan ' . ($payload['no_surat'] ?? '-') . '.', 'surat_penyerahan', (int) $newId);
 
@@ -91,6 +97,12 @@ class SuratPenyerahanController extends BaseController
 
         $payload = $this->suratPenyerahanPayload();
         $payload['box_id'] = $this->resolveSuratPenyerahanBoxId($payload['lokasi'] ?? null, $id, isset($item['box_id']) ? (int) $item['box_id'] : null);
+        try {
+            $payload['pdf_path'] = $this->replaceUploadedPdf($this->request->getFile('pdf'), (string) ($item['pdf_path'] ?? ''), $payload);
+        } catch (\Throwable $exception) {
+            return redirect()->back()->withInput()->with('error', $this->uploadPdfErrorMessage($exception));
+        }
+
         $this->suratPenyerahan->update($id, $payload);
         $this->logActivity('update', 'Surat Penyerahan', 'Mengubah surat penyerahan ' . ($payload['no_surat'] ?? '-') . '.', 'surat_penyerahan', $id);
 
@@ -104,10 +116,29 @@ class SuratPenyerahanController extends BaseController
             return redirect()->to(site_url('admin/surat-penyerahan'))->with('error', 'Data surat penyerahan tidak ditemukan.');
         }
 
+        $this->deleteStoredPdf((string) ($item['pdf_path'] ?? ''));
         $this->suratPenyerahan->delete($id);
         $this->logActivity('delete', 'Surat Penyerahan', 'Menghapus surat penyerahan ' . ($item['no_surat'] ?? '-') . '.', 'surat_penyerahan', $id);
 
         return redirect()->to(site_url('admin/surat-penyerahan'))->with('success', 'Data surat penyerahan berhasil dihapus.');
+    }
+
+    public function pdf(int $id)
+    {
+        $item = $this->suratPenyerahan->find($id);
+        if (! $item || empty($item['pdf_path'])) {
+            return redirect()->to(site_url('admin/surat-penyerahan'))->with('error', 'Dokumen PDF surat penyerahan tidak ditemukan.');
+        }
+
+        $path = WRITEPATH . $item['pdf_path'];
+        if (! is_file($path)) {
+            return redirect()->to(site_url('admin/surat-penyerahan'))->with('error', 'File PDF surat penyerahan tidak tersedia.');
+        }
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'inline; filename="surat-penyerahan-' . $id . '.pdf"')
+            ->setBody(file_get_contents($path) ?: '');
     }
 
     public function import()
@@ -231,9 +262,13 @@ class SuratPenyerahanController extends BaseController
             'NIBAR',
             'No. Surat',
             'Status Penggunaan',
+            'Spesifikasi',
+            'Jenis Penyerahan',
             'Luas',
-            'Tahun',
+            'Tanggal Perolehan',
+            'Alamat',
             'Lokasi',
+            'Dinas',
             'Pemberi Hibah',
         ]], null, 'A1');
 
@@ -245,15 +280,19 @@ class SuratPenyerahanController extends BaseController
                 $item['nibar'] ?? '',
                 $item['no_surat'] ?? '',
                 $item['status_penggunaan'] ?? '',
+                $item['spesifikasi'] ?? '',
+                $item['jenis_penyerahan'] ?? '',
                 $item['luas'] ?? '',
-                $item['tahun'] ?? '',
+                $item['tanggal_perolehan'] ?? '',
+                $item['alamat'] ?? '',
                 $item['lokasi'] ?? '',
+                $item['dinas'] ?? '',
                 $item['pemberi_hibah'] ?? '',
             ]], null, 'A' . $rowIndex);
             $rowIndex++;
         }
 
-        foreach (range('A', 'H') as $column) {
+        foreach (range('A', 'L') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -280,11 +319,11 @@ class SuratPenyerahanController extends BaseController
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Import Surat Penyerahan');
         $sheet->fromArray([
-            ['No', 'NIBAR', 'No. Surat', 'Status Penggunaan', 'Luas', 'Tahun', 'Lokasi', 'Pemberi Hibah'],
-            [1, 'NBR-001', '593/001/BPKAD/2026', 'Dipakai', '250.50', '2026', 'Donggala', 'Nama Pemberi Hibah'],
+            ['No', 'NIBAR', 'No. Surat', 'Status Penggunaan', 'Spesifikasi', 'Jenis Penyerahan', 'Luas', 'Tanggal Perolehan', 'Alamat', 'Lokasi', 'Dinas', 'Pemberi Hibah'],
+            [1, 'NBR-001', '593/001/BPKAD/2026', 'Dipakai', 'Tanah kantor', 'Hibah', '250.50', '2026-08-13', 'Jl. Contoh No. 1', 'Donggala', 'BPKAD', 'Nama Pemberi Hibah'],
         ], null, 'A1');
 
-        foreach (range('A', 'H') as $column) {
+        foreach (range('A', 'L') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -311,9 +350,13 @@ class SuratPenyerahanController extends BaseController
             'nibar'             => $this->nullIfEmpty((string) $this->request->getPost('nibar')),
             'no_surat'          => trim((string) $this->request->getPost('no_surat')),
             'status_penggunaan' => $this->nullIfEmpty((string) $this->request->getPost('status_penggunaan')),
+            'spesifikasi'       => $this->nullIfEmpty((string) $this->request->getPost('spesifikasi')),
+            'jenis_penyerahan'  => $this->nullIfEmpty((string) $this->request->getPost('jenis_penyerahan')),
             'luas'              => $this->decimalOrNull((string) $this->request->getPost('luas')),
-            'tahun'             => $this->integerOrNull((string) $this->request->getPost('tahun')),
+            'tanggal_perolehan' => $this->dateOrNull((string) $this->request->getPost('tanggal_perolehan')),
+            'alamat'            => $this->nullIfEmpty((string) $this->request->getPost('alamat')),
             'lokasi'            => $this->nullIfEmpty((string) $this->request->getPost('lokasi')),
+            'dinas'             => $this->nullIfEmpty((string) $this->request->getPost('dinas')),
             'pemberi_hibah'     => $this->nullIfEmpty((string) $this->request->getPost('pemberi_hibah')),
             'box_id'            => null,
         ];
@@ -325,10 +368,15 @@ class SuratPenyerahanController extends BaseController
             'nibar'             => 'permit_empty|max_length[100]',
             'no_surat'          => 'required|max_length[150]',
             'status_penggunaan' => 'permit_empty|max_length[150]',
+            'spesifikasi'       => 'permit_empty|max_length[255]',
+            'jenis_penyerahan'  => 'permit_empty|max_length[150]',
             'luas'              => 'permit_empty|decimal',
-            'tahun'             => 'permit_empty|integer|greater_than_equal_to[1900]|less_than_equal_to[2100]',
+            'tanggal_perolehan' => 'permit_empty|valid_date',
+            'alamat'            => 'permit_empty|max_length[255]',
             'lokasi'            => 'permit_empty|max_length[255]',
+            'dinas'             => 'permit_empty|max_length[150]',
             'pemberi_hibah'     => 'permit_empty|max_length[150]',
+            'pdf'               => 'if_exist|max_size[pdf,51200]|ext_in[pdf,pdf]',
             'box_id'            => 'permit_empty|integer',
         ];
     }
@@ -381,10 +429,43 @@ class SuratPenyerahanController extends BaseController
         return $value === '' ? null : $value;
     }
 
-    private function integerOrNull(string $value): ?int
+    private function dateOrNull(string $value): ?string
     {
         $value = trim($value);
-        return $value === '' ? null : (int) $value;
+        if ($value === '') {
+            return null;
+        }
+
+        $formats = [
+            'Y-m-d',
+            'd/m/Y',
+            'm/d/Y',
+            'd-m-Y',
+            'm-d-Y',
+            'd.m.Y',
+            'm.d.Y',
+            'j/n/Y',
+            'n/j/Y',
+            'j-n-Y',
+            'n-j-Y',
+        ];
+
+        foreach ($formats as $format) {
+            $date = \DateTime::createFromFormat($format, $value);
+            if ($date instanceof \DateTime) {
+                $errors = \DateTime::getLastErrors();
+                if (($errors['warning_count'] ?? 0) === 0 && ($errors['error_count'] ?? 0) === 0) {
+                    return $date->format('Y-m-d');
+                }
+            }
+        }
+
+        $timestamp = strtotime($value);
+        if ($timestamp !== false) {
+            return date('Y-m-d', $timestamp);
+        }
+
+        return $value;
     }
 
     private function extractImportRows(array $rows): array
@@ -399,10 +480,14 @@ class SuratPenyerahanController extends BaseController
                 'nibar'             => trim((string) $this->importCellValue($row, $headerMap, 'nibar', 'B')),
                 'no_surat'          => trim((string) $this->importCellValue($row, $headerMap, 'no_surat', 'C')),
                 'status_penggunaan' => trim((string) $this->importCellValue($row, $headerMap, 'status_penggunaan', 'D')),
-                'luas'              => trim((string) $this->importCellValue($row, $headerMap, 'luas', 'E')),
-                'tahun'             => trim((string) $this->importCellValue($row, $headerMap, 'tahun', 'F')),
-                'lokasi'            => trim((string) $this->importCellValue($row, $headerMap, 'lokasi', 'G')),
-                'pemberi_hibah'     => trim((string) $this->importCellValue($row, $headerMap, 'pemberi_hibah', 'H')),
+                'spesifikasi'       => trim((string) $this->importCellValue($row, $headerMap, 'spesifikasi', 'E')),
+                'jenis_penyerahan'  => trim((string) $this->importCellValue($row, $headerMap, 'jenis_penyerahan', 'F')),
+                'luas'              => trim((string) $this->importCellValue($row, $headerMap, 'luas', 'G')),
+                'tanggal_perolehan' => trim((string) $this->importCellValue($row, $headerMap, 'tanggal_perolehan', 'H')),
+                'alamat'            => trim((string) $this->importCellValue($row, $headerMap, 'alamat', 'I')),
+                'lokasi'            => trim((string) $this->importCellValue($row, $headerMap, 'lokasi', 'J')),
+                'dinas'             => trim((string) $this->importCellValue($row, $headerMap, 'dinas', 'K')),
+                'pemberi_hibah'     => trim((string) $this->importCellValue($row, $headerMap, 'pemberi_hibah', 'L')),
             ];
         }
 
@@ -428,16 +513,32 @@ class SuratPenyerahanController extends BaseController
                 $map['status_penggunaan'] = $column;
                 continue;
             }
+            if ($normalizedHeader === 'spesifikasi') {
+                $map['spesifikasi'] = $column;
+                continue;
+            }
+            if (in_array($normalizedHeader, ['jenis penyerahan', 'jenis_penyerahan'], true)) {
+                $map['jenis_penyerahan'] = $column;
+                continue;
+            }
             if ($normalizedHeader === 'luas') {
                 $map['luas'] = $column;
                 continue;
             }
-            if ($normalizedHeader === 'tahun') {
-                $map['tahun'] = $column;
+            if (in_array($normalizedHeader, ['tanggal perolehan', 'tanggal_perolehan'], true)) {
+                $map['tanggal_perolehan'] = $column;
+                continue;
+            }
+            if ($normalizedHeader === 'alamat') {
+                $map['alamat'] = $column;
                 continue;
             }
             if ($normalizedHeader === 'lokasi') {
                 $map['lokasi'] = $column;
+                continue;
+            }
+            if ($normalizedHeader === 'dinas') {
+                $map['dinas'] = $column;
                 continue;
             }
             if (in_array($normalizedHeader, ['pemberi hibah', 'pemberi_hibah'], true)) {
@@ -471,12 +572,110 @@ class SuratPenyerahanController extends BaseController
             'nibar'             => $this->nullIfEmpty((string) ($row['nibar'] ?? '')),
             'no_surat'          => trim((string) ($row['no_surat'] ?? '')),
             'status_penggunaan' => $this->nullIfEmpty((string) ($row['status_penggunaan'] ?? '')),
+            'spesifikasi'       => $this->nullIfEmpty((string) ($row['spesifikasi'] ?? '')),
+            'jenis_penyerahan'  => $this->nullIfEmpty((string) ($row['jenis_penyerahan'] ?? '')),
             'luas'              => $this->decimalOrNull((string) ($row['luas'] ?? '')),
-            'tahun'             => $this->integerOrNull((string) ($row['tahun'] ?? '')),
+            'tanggal_perolehan' => $this->dateOrNull((string) ($row['tanggal_perolehan'] ?? '')),
+            'alamat'            => $this->nullIfEmpty((string) ($row['alamat'] ?? '')),
             'lokasi'            => $this->nullIfEmpty((string) ($row['lokasi'] ?? '')),
+            'dinas'             => $this->nullIfEmpty((string) ($row['dinas'] ?? '')),
             'pemberi_hibah'     => $this->nullIfEmpty((string) ($row['pemberi_hibah'] ?? '')),
             'box_id'            => null,
         ];
+    }
+
+    private function storeUploadedPdf($file, array $data): ?string
+    {
+        if (! $file || ! $file->isValid() || $file->hasMoved()) {
+            return null;
+        }
+
+        $uploadPath = WRITEPATH . 'uploads/surat_penyerahan';
+        if (! is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        $extension = strtolower((string) $file->getExtension());
+        if ($extension === '') {
+            $extension = 'pdf';
+        }
+
+        $baseName = $this->suratPenyerahanPdfBaseName($data);
+        $newName = $this->uniqueUploadFilename($uploadPath, $baseName, $extension);
+        $file->move($uploadPath, $newName);
+
+        return 'uploads/surat_penyerahan/' . $newName;
+    }
+
+    private function replaceUploadedPdf($file, string $oldPath, array $data): ?string
+    {
+        if (! $file || ! $file->isValid() || $file->hasMoved()) {
+            return $oldPath !== '' ? $oldPath : null;
+        }
+
+        $newPath = $this->storeUploadedPdf($file, $data);
+        if ($oldPath !== '' && $newPath !== null) {
+            $this->deleteStoredPdf($oldPath);
+        }
+
+        return $newPath;
+    }
+
+    private function deleteStoredPdf(string $path): void
+    {
+        if ($path === '') {
+            return;
+        }
+
+        $absolutePath = WRITEPATH . $path;
+        if (is_file($absolutePath)) {
+            @unlink($absolutePath);
+        }
+    }
+
+    private function uploadPdfErrorMessage(\Throwable $exception): string
+    {
+        $message = 'Dokumen PDF surat penyerahan gagal diupload. Periksa permission folder writable/uploads/surat_penyerahan.';
+        if (strtolower((string) ENVIRONMENT) === 'development') {
+            $message .= ' Detail: ' . $exception->getMessage();
+        }
+
+        return $message;
+    }
+
+    private function suratPenyerahanPdfBaseName(array $data): string
+    {
+        $parts = [
+            $this->filenameToken((string) ($data['no_surat'] ?? '')),
+            $this->filenameToken((string) ($data['jenis_penyerahan'] ?? '')),
+        ];
+
+        $parts = array_values(array_filter($parts, static fn (string $part): bool => $part !== ''));
+
+        return $parts !== [] ? implode('_', $parts) : 'surat-penyerahan';
+    }
+
+    private function filenameToken(string $value): string
+    {
+        $value = trim($value);
+        $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value) ?: $value;
+        $value = preg_replace('/[^A-Za-z0-9]+/', '-', $value) ?? '';
+        $value = trim($value, '-');
+
+        return substr($value, 0, 80);
+    }
+
+    private function uniqueUploadFilename(string $uploadPath, string $baseName, string $extension): string
+    {
+        $filename = $baseName . '.' . $extension;
+        $counter = 2;
+
+        while (is_file($uploadPath . DIRECTORY_SEPARATOR . $filename)) {
+            $filename = $baseName . '-' . $counter . '.' . $extension;
+            $counter++;
+        }
+
+        return $filename;
     }
 
     private function resolveSuratPenyerahanBoxId(?string $lokasi, ?int $excludeSuratId = null, ?int $preferredBoxId = null): ?int

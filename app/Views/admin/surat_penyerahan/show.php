@@ -18,26 +18,49 @@
         <div class="card">
             <div class="card-body">
                 <dl class="row">
-                    <dt class="col-sm-3">NIBAR</dt>
-                    <dd class="col-sm-9"><?= esc((string) ($item['nibar'] ?? '-')) ?></dd>
-
                     <dt class="col-sm-3">No. Surat</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['no_surat'] ?? '-')) ?></dd>
+
+                    <dt class="col-sm-3">NIBAR</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['nibar'] ?? '-')) ?></dd>
 
                     <dt class="col-sm-3">Status Penggunaan</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['status_penggunaan'] ?? '-')) ?></dd>
 
+                    <dt class="col-sm-3">Spesifikasi</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['spesifikasi'] ?? '-')) ?></dd>
+
+                    <dt class="col-sm-3">Jenis Penyerahan</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['jenis_penyerahan'] ?? '-')) ?></dd>
+
                     <dt class="col-sm-3">Luas</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['luas'] ?? '-')) ?></dd>
 
-                    <dt class="col-sm-3">Tahun</dt>
-                    <dd class="col-sm-9"><?= esc((string) ($item['tahun'] ?? '-')) ?></dd>
+                    <dt class="col-sm-3">Tanggal Perolehan</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['tanggal_perolehan'] ?? '-')) ?></dd>
+
+                    <dt class="col-sm-3">Alamat</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['alamat'] ?? '-')) ?></dd>
 
                     <dt class="col-sm-3">Lokasi</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['lokasi'] ?? '-')) ?></dd>
 
+                    <dt class="col-sm-3">Dinas</dt>
+                    <dd class="col-sm-9"><?= esc((string) ($item['dinas'] ?? '-')) ?></dd>
+
                     <dt class="col-sm-3">Pemberi Hibah</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['pemberi_hibah'] ?? '-')) ?></dd>
+
+                    <dt class="col-sm-3">Dokumen PDF</dt>
+                    <dd class="col-sm-9">
+                        <?php if (! empty($item['pdf_path'])): ?>
+                            <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" class="btn btn-outline-danger btn-sm" target="_blank" rel="noopener">
+                                <i class="fas fa-file-pdf"></i> Lihat PDF
+                            </a>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </dd>
                 </dl>
             </div>
         </div>

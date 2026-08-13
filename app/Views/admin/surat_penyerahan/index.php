@@ -59,6 +59,18 @@
         max-width: 150px;
     }
 
+    .spesifikasi-column {
+        width: 145px;
+        min-width: 145px;
+        max-width: 145px;
+    }
+
+    .jenis-column {
+        width: 130px;
+        min-width: 130px;
+        max-width: 130px;
+    }
+
     .luas-column {
         width: 72px;
         min-width: 72px;
@@ -67,10 +79,10 @@
         white-space: nowrap;
     }
 
-    .tahun-column {
-        width: 62px;
-        min-width: 62px;
-        max-width: 62px;
+    .tanggal_perolehan-column {
+        width: 118px;
+        min-width: 118px;
+        max-width: 118px;
         text-align: center;
         white-space: nowrap;
     }
@@ -81,6 +93,18 @@
         max-width: 130px;
     }
 
+    .alamat-column {
+        width: 150px;
+        min-width: 150px;
+        max-width: 150px;
+    }
+
+    .dinas-column {
+        width: 125px;
+        min-width: 125px;
+        max-width: 125px;
+    }
+
     .pemberi-column {
         width: 130px;
         min-width: 130px;
@@ -88,8 +112,8 @@
     }
 
     .aksi-column {
-        width: 86px;
-        min-width: 86px;
+        width: 108px;
+        min-width: 108px;
         white-space: nowrap;
     }
 
@@ -105,7 +129,11 @@
     }
 
     .status-cell,
+    .spesifikasi-cell,
+    .jenis-cell,
     .lokasi-cell,
+    .alamat-cell,
+    .dinas-cell,
     .pemberi-cell {
         overflow: hidden;
         display: -webkit-box;
@@ -168,8 +196,8 @@
         }
 
         #surat-penyerahan-table {
-            width: 913px !important;
-            min-width: 913px;
+            width: 1627px !important;
+            min-width: 1627px;
         }
     }
 
@@ -213,12 +241,16 @@
                     <thead>
                         <tr>
                             <th class="no-column">No</th>
-                            <th>NIBAR</th>
                             <th class="surat-column">No. Surat</th>
+                            <th>NIBAR</th>
                             <th class="status-column">Status Penggunaan</th>
+                            <th class="spesifikasi-column">Spesifikasi</th>
+                            <th class="jenis-column">Jenis Penyerahan</th>
                             <th class="luas-column">Luas</th>
-                            <th class="tahun-column">Tahun</th>
+                            <th class="tanggal_perolehan-column">Tanggal Perolehan</th>
                             <th class="lokasi-column">Lokasi</th>
+                            <th class="alamat-column">Alamat</th>
+                            <th class="dinas-column">Dinas</th>
                             <th class="pemberi-column">Pemberi Hibah</th>
                             <th class="aksi-column">Aksi</th>
                         </tr>
@@ -233,14 +265,23 @@
                             ?>
                             <tr>
                                 <td class="no-column"><?= $i++ ?></td>
-                                <td data-search="<?= esc($nibarSearch) ?>"><?= esc($nibar !== '' ? $nibar : '-') ?></td>
                                 <td class="surat-column"><?= esc((string) ($item['no_surat'] ?? '-')) ?></td>
+                                <td data-search="<?= esc($nibarSearch) ?>"><?= esc($nibar !== '' ? $nibar : '-') ?></td>
                                 <td class="status-column"><div class="status-cell"><?= esc((string) ($item['status_penggunaan'] ?? '-')) ?></div></td>
+                                <td class="spesifikasi-column"><div class="spesifikasi-cell"><?= esc((string) ($item['spesifikasi'] ?? '-')) ?></div></td>
+                                <td class="jenis-column"><div class="jenis-cell"><?= esc((string) ($item['jenis_penyerahan'] ?? '-')) ?></div></td>
                                 <td class="luas-column"><?= esc((string) ($item['luas'] ?? '-')) ?></td>
-                                <td class="tahun-column"><?= esc((string) ($item['tahun'] ?? '-')) ?></td>
+                                <td class="tanggal_perolehan-column"><?= esc((string) ($item['tanggal_perolehan'] ?? '-')) ?></td>
                                 <td class="lokasi-column"><div class="lokasi-cell"><?= esc((string) ($item['lokasi'] ?? '-')) ?></div></td>
+                                <td class="alamat-column"><div class="alamat-cell"><?= esc((string) ($item['alamat'] ?? '-')) ?></div></td>
+                                <td class="dinas-column"><div class="dinas-cell"><?= esc((string) ($item['dinas'] ?? '-')) ?></div></td>
                                 <td class="pemberi-column"><div class="pemberi-cell"><?= esc((string) ($item['pemberi_hibah'] ?? '-')) ?></div></td>
                                 <td class="aksi-cell">
+                                    <?php if (! empty($item['pdf_path'])): ?>
+                                        <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" class="btn btn-danger btn-xs" target="_blank" rel="noopener" title="Lihat PDF">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    <?php endif; ?>
                                     <a href="<?= site_url('admin/surat-penyerahan/' . $item['id']) ?>" class="btn btn-info btn-xs">
                                         <i class="fas fa-eye"></i>
                                     </a>
@@ -284,7 +325,7 @@
                         </a>
                     </div>
                     <div class="mb-3 small text-muted">
-                        Kolom yang dibaca: `NIBAR`, `No. Surat`, `Status Penggunaan`, `Luas`, `Tahun`, `Lokasi`, `Pemberi Hibah`.
+                        Kolom yang dibaca: `NIBAR`, `No. Surat`, `Status Penggunaan`, `Spesifikasi`, `Jenis Penyerahan`, `Luas`, `Tanggal Perolehan`, `Alamat`, `Lokasi`, `Dinas`, `Pemberi Hibah`.
                     </div>
                     <div class="form-group mb-0">
                         <label for="import_file">File Import</label>

@@ -13,7 +13,7 @@
         <?= view('partials/alerts') ?>
         <div class="card">
             <div class="card-body">
-                <form action="<?= site_url('admin/surat-penyerahan/' . $item['id']) ?>" method="post">
+                <form action="<?= site_url('admin/surat-penyerahan/' . $item['id']) ?>" method="post" enctype="multipart/form-data">
                     <?= csrf_field() ?>
                     <?= view('admin/surat_penyerahan/_form', ['item' => $item]) ?>
                     <div class="d-flex justify-content-between">

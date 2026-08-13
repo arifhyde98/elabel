@@ -94,15 +94,21 @@
                             <th>No. Surat</th>
                             <th>NIBAR</th>
                             <th>Status Penggunaan</th>
+                            <th>Spesifikasi</th>
+                            <th>Jenis Penyerahan</th>
                             <th>Luas</th>
-                            <th>Tahun</th>
+                            <th>Tanggal Perolehan</th>
+                            <th>Lokasi</th>
+                            <th>Alamat</th>
+                            <th>Dinas</th>
                             <th>Pemberi Hibah</th>
+                            <th>PDF</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php if (empty($items)): ?>
                         <tr>
-                            <td colspan="7" class="text-center">Belum ada data surat penyerahan.</td>
+                            <td colspan="13" class="text-center">Belum ada data surat penyerahan.</td>
                         </tr>
                     <?php else: ?>
                         <?php $i = 1; ?>
@@ -112,9 +118,23 @@
                                 <td><?= esc((string) ($item['no_surat'] ?? '-')) ?></td>
                                 <td><?= esc((string) ($item['nibar'] ?? '-')) ?></td>
                                 <td><?= esc((string) ($item['status_penggunaan'] ?? '-')) ?></td>
+                                <td><?= esc((string) ($item['spesifikasi'] ?? '-')) ?></td>
+                                <td><?= esc((string) ($item['jenis_penyerahan'] ?? '-')) ?></td>
                                 <td><?= esc((string) ($item['luas'] ?? '-')) ?></td>
-                                <td><?= esc((string) ($item['tahun'] ?? '-')) ?></td>
+                                <td><?= esc((string) ($item['tanggal_perolehan'] ?? '-')) ?></td>
+                                <td><?= esc((string) ($item['lokasi'] ?? '-')) ?></td>
+                                <td><?= esc((string) ($item['alamat'] ?? '-')) ?></td>
+                                <td><?= esc((string) ($item['dinas'] ?? '-')) ?></td>
                                 <td><?= esc((string) ($item['pemberi_hibah'] ?? '-')) ?></td>
+                                <td>
+                                    <?php if (! empty($item['pdf_path'])): ?>
+                                        <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" class="btn btn-danger btn-xs" target="_blank" rel="noopener">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    <?php else: ?>
+                                        -
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
