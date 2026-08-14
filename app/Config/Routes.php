@@ -146,6 +146,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
         $routes->get('loans/bpkb', 'Admin\LoanController::index/bpkb');
         $routes->get('loans/sertifikat', 'Admin\LoanController::index/sertifikat');
         $routes->post('loans/manual', 'Admin\LoanController::storeManual');
+        $routes->get('loans/(:num)/download', 'Admin\LoanController::download/$1');
         $routes->post('loans/(:num)/approve', 'Admin\LoanController::approve/$1');
         $routes->post('loans/(:num)/reject', 'Admin\LoanController::reject/$1');
         $routes->post('loans/(:num)/delete', 'Admin\LoanController::delete/$1');
@@ -162,6 +163,9 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
 
 // Monitoring API (Spoke)
 $routes->get('api/health-check', 'HealthCheck::index');
+
+// SIPAT Integration API
+$routes->get('api/v1/sertifikat/(:segment)', 'Api\SertifikatApi::getByNibar/$1');
 
 /*
  * --------------------------------------------------------------------

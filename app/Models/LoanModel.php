@@ -14,6 +14,7 @@ class LoanModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'bpkb_id',
+        'sertifikat_id',
         'requester_id',
         'requester_name',
         'requester_phone',
@@ -34,6 +35,7 @@ class LoanModel extends Model
     protected array $casts = [
         'id'           => 'integer',
         'bpkb_id'      => 'integer',
+        'sertifikat_id'=> 'integer',
         'requester_id' => 'integer',
         'approved_by'  => 'integer',
         'requested_at' => 'datetime',
@@ -48,7 +50,8 @@ class LoanModel extends Model
     protected $updatedField  = 'updated_at';
 
     protected $validationRules = [
-        'bpkb_id'      => 'required|integer',
+        'bpkb_id'      => 'permit_empty|integer',
+        'sertifikat_id'=> 'permit_empty|integer',
         'status'       => 'permit_empty|in_list[Menunggu,Disetujui,Ditolak,Selesai]',
     ];
 }

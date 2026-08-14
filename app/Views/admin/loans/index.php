@@ -39,6 +39,12 @@
         color: #1d4ed8;
         box-shadow: 0 10px 22px rgba(59, 130, 246, 0.2);
     }
+    .loan-actions {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
 </style>
 <section class="content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -126,6 +132,7 @@
                                 <td><?= esc((string) $item['status']) ?></td>
                                 <td><?= esc((string) ($item['note'] ?? '-')) ?></td>
                                 <td>
+                                    <div class="loan-actions">
                                     <?php if ($item['status'] === 'Menunggu'): ?>
                                         <form action="<?= site_url('admin/loans/' . $item['id'] . '/approve') ?>" method="post" class="d-inline">
                                             <?= csrf_field() ?>
@@ -137,7 +144,13 @@
                                             <button type="submit" class="btn btn-danger btn-xs">Tolak</button>
                                         </form>
                                     <?php elseif ($item['status'] === 'Disetujui'): ?>
-                                        <span class="badge badge-success">File dikirim manual</span>
+                                        <?php if (! empty($item['document_pdf_path'])): ?>
+                                            <a href="<?= site_url('admin/loans/' . $item['id'] . '/download') ?>" class="btn btn-success btn-xs" aria-label="Download File Scan" title="Download File Scan">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="badge badge-warning">File belum tersedia</span>
+                                        <?php endif; ?>
                                     <?php else: ?>
                                         <span class="badge badge-secondary">Selesai</span>
                                     <?php endif; ?>
@@ -149,6 +162,7 @@
                                             </button>
                                         </form>
                                     <?php endif; ?>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

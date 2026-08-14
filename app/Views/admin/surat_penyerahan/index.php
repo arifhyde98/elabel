@@ -59,18 +59,6 @@
         max-width: 150px;
     }
 
-    .spesifikasi-column {
-        width: 145px;
-        min-width: 145px;
-        max-width: 145px;
-    }
-
-    .jenis-column {
-        width: 130px;
-        min-width: 130px;
-        max-width: 130px;
-    }
-
     .luas-column {
         width: 72px;
         min-width: 72px;
@@ -79,41 +67,27 @@
         white-space: nowrap;
     }
 
-    .tanggal_perolehan-column {
-        width: 118px;
-        min-width: 118px;
-        max-width: 118px;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    .lokasi-column {
-        width: 130px;
-        min-width: 130px;
-        max-width: 130px;
-    }
-
-    .alamat-column {
+    .nibar-column {
         width: 150px;
         min-width: 150px;
         max-width: 150px;
     }
 
-    .dinas-column {
-        width: 125px;
-        min-width: 125px;
-        max-width: 125px;
+    .lokasi-column {
+        width: 96px;
+        min-width: 96px;
+        max-width: 96px;
     }
 
-    .pemberi-column {
-        width: 130px;
-        min-width: 130px;
-        max-width: 130px;
+    .dinas-column {
+        width: 92px;
+        min-width: 92px;
+        max-width: 92px;
     }
 
     .aksi-column {
-        width: 108px;
-        min-width: 108px;
+        width: 86px;
+        min-width: 86px;
         white-space: nowrap;
     }
 
@@ -128,13 +102,22 @@
         margin-bottom: 0.2rem;
     }
 
+    .nibar-cell {
+        min-width: 0;
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-all;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 1.15;
+        font-size: 0.72rem;
+    }
+
     .status-cell,
-    .spesifikasi-cell,
-    .jenis-cell,
     .lokasi-cell,
-    .alamat-cell,
-    .dinas-cell,
-    .pemberi-cell {
+    .dinas-cell {
         overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -196,8 +179,8 @@
         }
 
         #surat-penyerahan-table {
-            width: 1627px !important;
-            min-width: 1627px;
+            width: 949px !important;
+            min-width: 949px;
         }
     }
 
@@ -242,16 +225,11 @@
                         <tr>
                             <th class="no-column">No</th>
                             <th class="surat-column">No. Surat</th>
-                            <th>NIBAR</th>
+                            <th class="nibar-column">NIBAR</th>
                             <th class="status-column">Status Penggunaan</th>
-                            <th class="spesifikasi-column">Spesifikasi</th>
-                            <th class="jenis-column">Jenis Penyerahan</th>
                             <th class="luas-column">Luas</th>
-                            <th class="tanggal_perolehan-column">Tanggal Perolehan</th>
                             <th class="lokasi-column">Lokasi</th>
-                            <th class="alamat-column">Alamat</th>
                             <th class="dinas-column">Dinas</th>
-                            <th class="pemberi-column">Pemberi Hibah</th>
                             <th class="aksi-column">Aksi</th>
                         </tr>
                     </thead>
@@ -266,31 +244,26 @@
                             <tr>
                                 <td class="no-column"><?= $i++ ?></td>
                                 <td class="surat-column"><?= esc((string) ($item['no_surat'] ?? '-')) ?></td>
-                                <td data-search="<?= esc($nibarSearch) ?>"><?= esc($nibar !== '' ? $nibar : '-') ?></td>
+                                <td class="nibar-column" data-search="<?= esc($nibarSearch) ?>"><div class="nibar-cell"><?= esc($nibar !== '' ? $nibar : '-') ?></div></td>
                                 <td class="status-column"><div class="status-cell"><?= esc((string) ($item['status_penggunaan'] ?? '-')) ?></div></td>
-                                <td class="spesifikasi-column"><div class="spesifikasi-cell"><?= esc((string) ($item['spesifikasi'] ?? '-')) ?></div></td>
-                                <td class="jenis-column"><div class="jenis-cell"><?= esc((string) ($item['jenis_penyerahan'] ?? '-')) ?></div></td>
                                 <td class="luas-column"><?= esc((string) ($item['luas'] ?? '-')) ?></td>
-                                <td class="tanggal_perolehan-column"><?= esc((string) ($item['tanggal_perolehan'] ?? '-')) ?></td>
                                 <td class="lokasi-column"><div class="lokasi-cell"><?= esc((string) ($item['lokasi'] ?? '-')) ?></div></td>
-                                <td class="alamat-column"><div class="alamat-cell"><?= esc((string) ($item['alamat'] ?? '-')) ?></div></td>
                                 <td class="dinas-column"><div class="dinas-cell"><?= esc((string) ($item['dinas'] ?? '-')) ?></div></td>
-                                <td class="pemberi-column"><div class="pemberi-cell"><?= esc((string) ($item['pemberi_hibah'] ?? '-')) ?></div></td>
                                 <td class="aksi-cell">
+                                    <a href="<?= site_url('admin/surat-penyerahan/' . $item['id']) ?>" class="btn btn-info btn-xs" aria-label="Lihat Detail" title="Lihat Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     <?php if (! empty($item['pdf_path'])): ?>
-                                        <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" class="btn btn-danger btn-xs" target="_blank" rel="noopener" title="Lihat PDF">
+                                        <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" class="btn btn-info btn-xs" target="_blank" rel="noopener" aria-label="Lihat PDF" title="Lihat PDF">
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
                                     <?php endif; ?>
-                                    <a href="<?= site_url('admin/surat-penyerahan/' . $item['id']) ?>" class="btn btn-info btn-xs">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/edit') ?>" class="btn btn-warning btn-xs">
+                                    <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/edit') ?>" class="btn btn-warning btn-xs" aria-label="Edit Data" title="Edit Data">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/delete') ?>" method="post" class="d-inline" onsubmit="return confirm('Hapus data surat penyerahan ini?');">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="btn btn-danger btn-xs">
+                                        <button type="submit" class="btn btn-danger btn-xs" aria-label="Hapus Data" title="Hapus Data">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -350,9 +323,6 @@
             lengthChange: false,
             order: [[0, 'asc']],
             autoWidth: false,
-            columnDefs: [
-                { targets: 1, visible: false, searchable: true }
-            ],
             language: {
                 search: '',
                 emptyTable: 'Belum ada data surat penyerahan.'

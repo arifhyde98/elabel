@@ -6,18 +6,21 @@ use App\Controllers\BaseController;
 use App\Models\BpkbModel;
 use App\Models\LoanHistoryModel;
 use App\Models\LoanModel;
+use App\Models\SertifikatModel;
 
 class LoanController extends BaseController
 {
     private LoanModel $loans;
     private LoanHistoryModel $histories;
     private BpkbModel $bpkb;
+    private SertifikatModel $sertifikat;
 
     public function __construct()
     {
         $this->loans     = new LoanModel();
         $this->histories = new LoanHistoryModel();
         $this->bpkb      = new BpkbModel();
+        $this->sertifikat = new SertifikatModel();
     }
 
     public function index(string $documentType = 'bpkb'): string
@@ -32,7 +35,7 @@ class LoanController extends BaseController
 
         if ($documentType === 'bpkb') {
             $items = $this->loans
-                ->select('loans.*, bpkb.plate_number, bpkb.year as bpkb_year, boxes.box_code, COALESCE(users.name, loans.requester_name) as requester_name')
+                ->select('loans.*, bpkb.plate_number, bpkb.year as bpkb_year, bpkb.pdf_path as document_pdf_path, boxes.box_code, COALESCE(users.name, loans.requester_name) as requester_name')
                 ->join('bpkb', 'bpkb.id = loans.bpkb_id')
                 ->join('boxes', 'boxes.id = bpkb.box_id')
                 ->join('users', 'users.id = loans.requester_id', 'left')
@@ -43,6 +46,14 @@ class LoanController extends BaseController
                 ->join('boxes', 'boxes.id = bpkb.box_id')
                 ->where('bpkb.status', 'Tersedia')
                 ->orderBy('bpkb.plate_number', 'asc')
+                ->findAll();
+        } elseif ($this->loanFieldExists('sertifikat_id')) {
+            $items = $this->loans
+                ->select('loans.*, sertifikat_tanah.no_sertipikat, sertifikat_tanah.lokasi, sertifikat_tanah.pdf_path as document_pdf_path, sertifikat_boxes.box_code, COALESCE(users.name, loans.requester_name) as requester_name')
+                ->join('sertifikat_tanah', 'sertifikat_tanah.id = loans.sertifikat_id')
+                ->join('sertifikat_boxes', 'sertifikat_boxes.id = sertifikat_tanah.box_id', 'left')
+                ->join('users', 'users.id = loans.requester_id', 'left')
+                ->orderBy('loans.requested_at', 'desc')
                 ->findAll();
         }
 
@@ -209,6 +220,151 @@ class LoanController extends BaseController
         $this->logActivity('delete', 'Permintaan Scan', 'Menghapus ' . $scanLabel . ' yang lebih dari 7 hari.', 'loans', $id);
 
         return redirect()->back()->with('success', 'Permintaan scan berhasil dihapus.');
+    }
+
+    public function download(int $id)
+    {
+        $loan = $this->loans->find($id);
+        if (! $loan) {
+            return redirect()->back()->with('error', 'Data permintaan scan tidak ditemukan.');
+        }
+
+        if (($loan['status'] ?? '') !== 'Disetujui') {
+            return redirect()->back()->with('error', 'File scan hanya bisa didownload setelah permintaan disetujui.');
+        }
+
+        $document = null;
+        $filename = 'scan-' . $id . '.pdf';
+
+        if (! empty($loan['bpkb_id'])) {
+            $document = $this->bpkb->find((int) $loan['bpkb_id']);
+            $filename = 'scan-bpkb-' . $this->filenameToken((string) ($document['plate_number'] ?? $loan['bpkb_id'])) . '.pdf';
+        } elseif ($this->loanFieldExists('sertifikat_id') && ! empty($loan['sertifikat_id'])) {
+            $document = $this->sertifikat->find((int) $loan['sertifikat_id']);
+            $filename = 'scan-sertipikat-' . $this->filenameToken((string) ($document['no_sertipikat'] ?? $loan['sertifikat_id'])) . '.pdf';
+        }
+
+        if (! $document || empty($document['pdf_path'])) {
+            return redirect()->back()->with('error', 'File scan untuk data yang diminta belum tersedia.');
+        }
+
+        $path = WRITEPATH . $document['pdf_path'];
+        if (! is_file($path)) {
+            return redirect()->back()->with('error', 'File scan untuk data yang diminta tidak ditemukan.');
+        }
+
+        $watermarkedPath = $this->watermarkPdf($path, $loan);
+        if ($watermarkedPath === null) {
+            return redirect()->back()->with('error', 'File scan gagal diberi watermark.');
+        }
+
+        $contents = file_get_contents($watermarkedPath);
+        @unlink($watermarkedPath);
+
+        if ($contents === false) {
+            return redirect()->back()->with('error', 'File scan gagal dibaca.');
+        }
+
+        $this->logActivity('download', 'Permintaan Scan', 'Mendownload file scan permintaan ID ' . $id . '.', 'loans', $id);
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setBody($contents);
+    }
+
+    private function loanFieldExists(string $field): bool
+    {
+        return db_connect()->fieldExists($field, 'loans');
+    }
+
+    private function filenameToken(string $value): string
+    {
+        $value = strtolower(trim($value));
+        $value = preg_replace('/[^a-z0-9]+/', '-', $value) ?? '';
+        $value = trim($value, '-');
+
+        return $value !== '' ? $value : 'dokumen';
+    }
+
+    private function watermarkPdf(string $sourcePath, array $loan): ?string
+    {
+        $gsPath = trim((string) shell_exec('command -v gs 2>/dev/null'));
+        if ($gsPath === '' || ! is_executable($gsPath)) {
+            return null;
+        }
+
+        $outputPath = tempnam(sys_get_temp_dir(), 'scan-watermark-');
+        $scriptPath = tempnam(sys_get_temp_dir(), 'scan-watermark-ps-');
+        if ($outputPath === false || $scriptPath === false) {
+            return null;
+        }
+
+        $requesterName = trim((string) ($loan['requester_name'] ?? 'Pemohon'));
+        if ($requesterName === '') {
+            $requesterName = 'Pemohon';
+        }
+
+        $requestedDate = '-';
+        if (! empty($loan['requested_at'])) {
+            $timestamp = strtotime((string) $loan['requested_at']);
+            $requestedDate = $timestamp !== false ? date('d/m/Y H:i', $timestamp) : (string) $loan['requested_at'];
+        }
+
+        $lineOne = 'DIMINTA OLEH: ' . strtoupper($requesterName);
+        $lineTwo = 'TANGGAL PENGAJUAN: ' . $requestedDate;
+
+        $script = <<<PS
+<<
+  /EndPage {
+    2 ne {
+      pop
+      gsave
+        0 setgray
+        /Helvetica-Bold findfont 9 scalefont setfont
+        24 24 moveto ({$this->pdfString($lineOne)}) show
+        /Helvetica findfont 8 scalefont setfont
+        24 13 moveto ({$this->pdfString($lineTwo)}) show
+      grestore
+      true
+    } {
+      pop
+      false
+    } ifelse
+  } bind
+>> setpagedevice
+PS;
+
+        if (file_put_contents($scriptPath, $script) === false) {
+            @unlink($outputPath);
+            @unlink($scriptPath);
+            return null;
+        }
+
+        $command = escapeshellarg($gsPath)
+            . ' -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dCompatibilityLevel=1.4'
+            . ' -sOutputFile=' . escapeshellarg($outputPath)
+            . ' ' . escapeshellarg($scriptPath)
+            . ' ' . escapeshellarg($sourcePath)
+            . ' 2>&1';
+
+        exec($command, $output, $exitCode);
+        @unlink($scriptPath);
+
+        if ($exitCode !== 0 || ! is_file($outputPath) || filesize($outputPath) === 0) {
+            @unlink($outputPath);
+            return null;
+        }
+
+        return $outputPath;
+    }
+
+    private function pdfString(string $value): string
+    {
+        $value = str_replace(["\r", "\n"], ' ', $value);
+        $value = preg_replace('/[^\x20-\x7E]/', '?', $value) ?? '';
+
+        return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $value);
     }
 
 }

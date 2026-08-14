@@ -54,11 +54,11 @@
                     <dt class="col-sm-3">Dokumen PDF</dt>
                     <dd class="col-sm-9">
                         <?php if (! empty($item['pdf_path'])): ?>
-                            <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" class="btn btn-outline-danger btn-sm" target="_blank" rel="noopener">
-                                <i class="fas fa-file-pdf"></i> Lihat PDF
+                            <a href="<?= site_url('admin/surat-penyerahan/' . $item['id'] . '/pdf') ?>" target="_blank" class="btn btn-sm btn-info" rel="noopener">
+                                <i class="fas fa-eye"></i> View PDF
                             </a>
                         <?php else: ?>
-                            -
+                            <span class="badge badge-secondary">Tidak ada</span>
                         <?php endif; ?>
                     </dd>
                 </dl>
