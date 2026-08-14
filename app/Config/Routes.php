@@ -165,6 +165,8 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
 $routes->get('api/health-check', 'HealthCheck::index');
 
 // SIPAT Integration API
+$routes->get('api/v1/sertifikat-all-nibar', 'Api\SertifikatApi::getAllNibar');
+$routes->get('api/v1/sertifikat-pdf/(:segment)', 'Api\SertifikatApi::viewPdf/$1');
 $routes->get('api/v1/sertifikat/(:segment)', 'Api\SertifikatApi::getByNibar/$1');
 
 /*
