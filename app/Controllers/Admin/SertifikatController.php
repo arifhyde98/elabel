@@ -58,8 +58,23 @@ class SertifikatController extends BaseController
 
     public function create(): string
     {
+        $item = [
+            'nibar'             => $this->request->getGet('nibar'),
+            'spesifikasi'       => $this->request->getGet('nama'),
+            'dinas'             => $this->request->getGet('opd'),
+            'nama_pemilik'      => $this->request->getGet('opd'),
+            'luas'              => $this->request->getGet('luas'),
+            'tanggal_perolehan' => $this->request->getGet('tanggal_perolehan'),
+            'nilai_perolehan'   => $this->request->getGet('nilai_perolehan'),
+            'cara_perolehan'    => $this->request->getGet('cara_perolehan'),
+            'alamat'            => $this->request->getGet('alamat'),
+            'lokasi'            => $this->request->getGet('alamat'),
+            'status_penggunaan' => $this->request->getGet('peruntukan'),
+        ];
+
         return view('admin/sertifikat/create', [
             'activeMenu' => 'sertifikat',
+            'item'       => $item,
         ]);
     }
 

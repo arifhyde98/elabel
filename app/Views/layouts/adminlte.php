@@ -880,6 +880,29 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item has-treeview <?= in_array(($activeMenu ?? ''), ['ebmd_tanah', 'ebmd_kendaraan'], true) ? 'menu-open' : '' ?>">
+                        <a href="#" class="nav-link <?= in_array(($activeMenu ?? ''), ['ebmd_tanah', 'ebmd_kendaraan'], true) ? 'active' : '' ?>">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>
+                                Master data
+                                <i class="right fas fa-angle-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?= site_url('admin/ebmd-tanah') ?>" class="nav-link <?= ($activeMenu ?? '') === 'ebmd_tanah' ? 'active' : '' ?>">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Tanah E-BMD</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= site_url('admin/ebmd-kendaraan') ?>" class="nav-link <?= ($activeMenu ?? '') === 'ebmd_kendaraan' ? 'active' : '' ?>">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Kendaraan E-BMD</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="nav-item has-treeview <?= in_array(($activeMenu ?? ''), ['deleted', 'loans'], true) ? 'menu-open' : '' ?>">
                         <a href="#" class="nav-link <?= in_array(($activeMenu ?? ''), ['deleted', 'loans'], true) ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-chart-line"></i>

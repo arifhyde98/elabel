@@ -151,6 +151,9 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
         $routes->post('loans/(:num)/reject', 'Admin\LoanController::reject/$1');
         $routes->post('loans/(:num)/delete', 'Admin\LoanController::delete/$1');
 
+        $routes->get('ebmd-tanah', 'Admin\EbmdTanahController::index');
+        $routes->get('ebmd-kendaraan', 'Admin\EbmdKendaraanController::index');
+
         $routes->get('users', 'Admin\UserController::index');
         $routes->get('users/create', 'Admin\UserController::create');
         $routes->post('users', 'Admin\UserController::store');
