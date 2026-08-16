@@ -901,6 +901,12 @@
                                     <p>Kendaraan E-BMD</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= site_url('admin/integration-logs') ?>" class="nav-link <?= ($activeMenu ?? '') === 'integration_logs' ? 'active' : '' ?>">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Log Integrasi API</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-treeview <?= in_array(($activeMenu ?? ''), ['deleted', 'loans'], true) ? 'menu-open' : '' ?>">

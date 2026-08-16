@@ -27,6 +27,8 @@ class SertifikatModel extends Model
         'dinas',
         'box_id',
         'pdf_path',
+        'sync_status',
+        'data_version',
     ];
 
     protected bool $allowEmptyInserts = false;

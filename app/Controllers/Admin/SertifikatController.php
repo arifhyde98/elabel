@@ -100,6 +100,51 @@ class SertifikatController extends BaseController
         $newId = $this->sertifikat->insert($payload);
         $this->logActivity('create', 'Sertipikat Tanah', 'Menambahkan sertipikat ' . ($payload['no_sertipikat'] ?? '-') . '.', 'sertifikat_tanah', (int) $newId);
 
+        // Integration Sync Trigger (eLabel -> SIPAT)
+        if (!empty($payload['nibar'])) {
+            $eventId = bin2hex(random_bytes(16));
+            $sipatSyncUrl = env('SIPAT_API_CERT_ISSUED_URL', 'https://sistem.sipat-donggala.my.id/api/v1/integration/certificate-issued');
+            $syncData = [
+                'event_id'      => $eventId,
+                'source'        => 'elabel',
+                'nibar'         => $payload['nibar'],
+                'no_sertipikat' => $payload['no_sertipikat'] ?? null,
+                'changes'       => [
+                    'luas'   => ['new' => $payload['luas'] ?? null],
+                    'alamat' => ['new' => $payload['alamat'] ?? null],
+                ],
+                'reason'   => 'Penerbitan Sertifikat Baru di eLabel',
+                'operator' => session()->get('user_id') ? 'User #' . session()->get('user_id') : 'Admin eLabel'
+            ];
+
+            $res = \App\Libraries\SyncService::dispatch($sipatSyncUrl, $syncData);
+            if ($res['success']) {
+                \App\Libraries\SyncService::logAudit([
+                    'event_id'      => $eventId,
+                    'nibar'         => $payload['nibar'],
+                    'event_name'    => 'CERTIFICATE_ISSUED',
+                    'source_system' => 'elabel',
+                    'direction'     => 'outbound',
+                    'changes'       => $syncData['changes'],
+                    'reason'        => $syncData['reason'],
+                    'sync_status'   => 'SUCCESS'
+                ]);
+            } else {
+                \App\Libraries\SyncService::enqueue($eventId, $sipatSyncUrl, $syncData);
+                \App\Libraries\SyncService::logAudit([
+                    'event_id'      => $eventId,
+                    'nibar'         => $payload['nibar'],
+                    'event_name'    => 'CERTIFICATE_ISSUED',
+                    'source_system' => 'elabel',
+                    'direction'     => 'outbound',
+                    'changes'       => $syncData['changes'],
+                    'reason'        => $syncData['reason'],
+                    'sync_status'   => 'PENDING',
+                    'error_message' => $res['error'] ?? 'API Unreachable'
+                ]);
+            }
+        }
+
         return redirect()->to(site_url('admin/sertifikat'))->with('success', 'Data sertipikat berhasil ditambahkan.');
     }
 
@@ -153,8 +198,62 @@ class SertifikatController extends BaseController
         } catch (\Throwable $exception) {
             return redirect()->back()->withInput()->with('error', $this->uploadPdfErrorMessage($exception));
         }
+
+        // Compare old vs new for shared fields
+        $sharedFields = ['luas', 'alamat', 'nilai_perolehan', 'tanggal_perolehan', 'cara_perolehan', 'dinas', 'status_penggunaan', 'spesifikasi'];
+        $changes = [];
+        foreach ($sharedFields as $field) {
+            $oldVal = $item[$field] ?? null;
+            $newVal = $payload[$field] ?? null;
+            if ((string)$oldVal !== (string)$newVal) {
+                $changes[$field] = ['old' => $oldVal, 'new' => $newVal];
+            }
+        }
+
         $this->sertifikat->update($id, $payload);
         $this->logActivity('update', 'Sertipikat Tanah', 'Mengubah sertipikat ' . ($payload['no_sertipikat'] ?? '-') . '.', 'sertifikat_tanah', $id);
+
+        $effectiveNibar = !empty($payload['nibar']) ? $payload['nibar'] : ($item['nibar'] ?? null);
+        if (!empty($effectiveNibar) && !empty($changes)) {
+            $eventId = bin2hex(random_bytes(16));
+            $sipatSyncUrl = env('SIPAT_API_ASSET_UPDATED_URL', 'https://sistem.sipat-donggala.my.id/api/v1/integration/asset-updated');
+            $syncData = [
+                'event_id' => $eventId,
+                'source'   => 'elabel',
+                'nibar'    => $effectiveNibar,
+                'changes'  => $changes,
+                'reason'   => 'Pembaruan data sertifikat di eLabel',
+                'operator' => session()->get('user_id') ? 'User #' . session()->get('user_id') : 'Admin eLabel'
+            ];
+
+            $res = \App\Libraries\SyncService::dispatch($sipatSyncUrl, $syncData);
+            if ($res['success']) {
+                \App\Libraries\SyncService::logAudit([
+                    'event_id'      => $eventId,
+                    'nibar'         => $effectiveNibar,
+                    'event_name'    => 'ASSET_DATA_CHANGED',
+                    'source_system' => 'elabel',
+                    'direction'     => 'outbound',
+                    'changes'       => $changes,
+                    'reason'        => $syncData['reason'],
+                    'sync_status'   => 'SUCCESS'
+                ]);
+            } else {
+                \App\Libraries\SyncService::enqueue($eventId, $sipatSyncUrl, $syncData);
+                \App\Libraries\SyncService::logAudit([
+                    'event_id'      => $eventId,
+                    'nibar'         => $effectiveNibar,
+                    'event_name'    => 'ASSET_DATA_CHANGED',
+                    'source_system' => 'elabel',
+                    'direction'     => 'outbound',
+                    'changes'       => $changes,
+                    'reason'        => $syncData['reason'],
+                    'sync_status'   => 'PENDING',
+                    'error_message' => $res['error'] ?? 'API Unreachable'
+                ]);
+                \Config\Database::connect()->table('sertifikat_tanah')->where('id', $id)->update(['sync_status' => 'pending']);
+            }
+        }
 
         return redirect()->to(site_url('admin/sertifikat'))->with('success', 'Data sertipikat berhasil diperbarui.');
     }
@@ -399,6 +498,47 @@ class SertifikatController extends BaseController
 
         $this->sertifikat->delete($id);
         $this->logActivity('delete', 'Sertipikat Tanah', 'Menghapus sertipikat ' . ($item['no_sertipikat'] ?? '-') . '.', 'sertifikat_tanah', $id);
+
+        // Integration Sync Trigger (eLabel -> SIPAT for deletion)
+        if (!empty($item['nibar'])) {
+            $eventId = bin2hex(random_bytes(16));
+            $sipatSyncUrl = env('SIPAT_API_CERT_DELETED_URL', 'https://sistem.sipat-donggala.my.id/api/v1/integration/certificate-deleted');
+            $syncData = [
+                'event_id'      => $eventId,
+                'source'        => 'elabel',
+                'nibar'         => $item['nibar'],
+                'no_sertipikat' => $item['no_sertipikat'] ?? null,
+                'reason'        => 'Penghapusan sertifikat fisik di eLabel',
+                'operator'      => session()->get('user_id') ? 'User #' . session()->get('user_id') : 'Admin eLabel'
+            ];
+
+            $res = \App\Libraries\SyncService::dispatch($sipatSyncUrl, $syncData);
+            if ($res['success']) {
+                \App\Libraries\SyncService::logAudit([
+                    'event_id'      => $eventId,
+                    'nibar'         => $item['nibar'],
+                    'event_name'    => 'CERTIFICATE_DELETED',
+                    'source_system' => 'elabel',
+                    'direction'     => 'outbound',
+                    'changes'       => ['status' => ['old' => 'Bersertifikat', 'new' => 'Dikembalikan ke Status Sebelumnya']],
+                    'reason'        => $syncData['reason'],
+                    'sync_status'   => 'SUCCESS'
+                ]);
+            } else {
+                \App\Libraries\SyncService::enqueue($eventId, $sipatSyncUrl, $syncData);
+                \App\Libraries\SyncService::logAudit([
+                    'event_id'      => $eventId,
+                    'nibar'         => $item['nibar'],
+                    'event_name'    => 'CERTIFICATE_DELETED',
+                    'source_system' => 'elabel',
+                    'direction'     => 'outbound',
+                    'changes'       => ['status' => ['old' => 'Bersertifikat', 'new' => 'Dikembalikan ke Status Sebelumnya']],
+                    'reason'        => $syncData['reason'],
+                    'sync_status'   => 'PENDING',
+                    'error_message' => $res['error'] ?? 'API Unreachable'
+                ]);
+            }
+        }
 
         return redirect()->to(site_url('admin/sertifikat'))->with('success', 'Data sertipikat berhasil dihapus.');
     }

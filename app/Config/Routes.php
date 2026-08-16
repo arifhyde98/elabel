@@ -153,6 +153,8 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
 
         $routes->get('ebmd-tanah', 'Admin\EbmdTanahController::index');
         $routes->get('ebmd-kendaraan', 'Admin\EbmdKendaraanController::index');
+        $routes->get('integration-logs', 'Admin\IntegrationLogController::index');
+        $routes->post('integration-logs/retry/(:num)', 'Admin\IntegrationLogController::retry/$1');
 
         $routes->get('users', 'Admin\UserController::index');
         $routes->get('users/create', 'Admin\UserController::create');
@@ -171,6 +173,7 @@ $routes->get('api/health-check', 'HealthCheck::index');
 $routes->get('api/v1/sertifikat-all-nibar', 'Api\SertifikatApi::getAllNibar');
 $routes->get('api/v1/sertifikat-pdf/(:segment)', 'Api\SertifikatApi::viewPdf/$1');
 $routes->get('api/v1/sertifikat/(:segment)', 'Api\SertifikatApi::getByNibar/$1');
+$routes->post('api/v1/integration/asset-updated', 'Api\IntegrationApi::assetUpdated');
 
 /*
  * --------------------------------------------------------------------
