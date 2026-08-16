@@ -1,0 +1,16 @@
+# Disable directory browsing
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+	Options +FollowSymlinks
+	RewriteEngine On
+
+	# Protect sensitive files and directories from public web access
+	RewriteRule ^\.(.*) - [F,L]
+	RewriteRule ^(app|writable|vendor|tests|builds)/ - [F,L]
+	RewriteRule ^(\.env|composer\.json|composer\.lock|spark|phpunit\.xml\.dist) - [F,L]
+
+	# Route to public folder if request is not already in public/
+	RewriteCond %{REQUEST_URI} !^/public/
+	RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

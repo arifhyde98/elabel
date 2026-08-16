@@ -40,7 +40,7 @@ class SertifikatApi extends ResourceController
         $pdfUrl = null;
         if ($result['pdf_path']) {
             $expires = time() + (60 * 30); // 30 minutes
-            $secret = env('ELABEL_URL_SIGNATURE_KEY', 'default-fallback-secret-2026');
+            $secret = env('ELABEL_URL_SIGNATURE_KEY', 'SECRET-URL-KEY-4d24d5364459d834d846353dceae3beb');
             $signature = hash_hmac('sha256', $result['nibar'] . '|' . $expires, $secret);
             $pdfUrl = base_url('api/v1/sertifikat-pdf/' . urlencode($result['nibar']) . '?expires=' . $expires . '&signature=' . $signature);
         }
@@ -105,7 +105,7 @@ class SertifikatApi extends ResourceController
             return $this->response->setStatusCode(403)->setBody('Akses ditolak: Link sudah kedaluwarsa.');
         }
 
-        $secret = env('ELABEL_URL_SIGNATURE_KEY', 'default-fallback-secret-2026');
+        $secret = env('ELABEL_URL_SIGNATURE_KEY', 'SECRET-URL-KEY-4d24d5364459d834d846353dceae3beb');
         $expectedSignature = hash_hmac('sha256', $nibar . '|' . $expires, $secret);
 
         if (!hash_equals($expectedSignature, $signature)) {

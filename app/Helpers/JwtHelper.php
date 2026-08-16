@@ -4,7 +4,10 @@ namespace App\Helpers;
 
 class JwtHelper
 {
-    private static string $secretKey = 'SIPAT_SSO_SECRET_KEY_JWT_2026_SECURE_TOKEN_DONGGALA';
+    private static function getSecretKey(): string
+    {
+        return env('JWT_SECRET_KEY', 'SIPAT_SSO_SECRET_KEY_JWT_2026_SECURE_TOKEN_DONGGALA');
+    }
 
     public static function decode(string $jwt): ?array
     {
@@ -20,7 +23,7 @@ class JwtHelper
         $base64UrlHeader = self::base64UrlEncode($header);
         $base64UrlPayload = self::base64UrlEncode($payload);
 
-        $expectedSignature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::$secretKey, true);
+        $expectedSignature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::getSecretKey(), true);
         $base64UrlExpectedSignature = self::base64UrlEncode($expectedSignature);
 
         if (!hash_equals($base64UrlExpectedSignature, $signatureProvided)) {

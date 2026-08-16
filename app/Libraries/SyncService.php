@@ -66,8 +66,9 @@ class SyncService
         }
     }
 
-    public static function dispatch(string $targetUrl, array $payload, string $apiKey = 'SIPAT-ELABEL-SECURE-KEY-2026'): array
+    public static function dispatch(string $targetUrl, array $payload, ?string $apiKey = null): array
     {
+        $apiKey = $apiKey ?? (env('SIPAT_API_KEY') ?: 'SIPAT-ELABEL-SECURE-KEY-2026');
         $client = \Config\Services::curlrequest();
         try {
             $response = $client->request('POST', $targetUrl, [
