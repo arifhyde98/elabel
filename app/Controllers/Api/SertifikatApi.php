@@ -23,7 +23,7 @@ class SertifikatApi extends ResourceController
         $db = \Config\Database::connect();
         
         $builder = $db->table('sertifikat_tanah s');
-        $builder->select('s.no_sertipikat, s.nibar, s.spesifikasi, s.nama_pemilik, s.pdf_path, b.box_code, b.lokasi as box_lokasi');
+        $builder->select('s.no_sertipikat, s.nibar, s.spesifikasi, s.nama_pemilik, s.tanggal_perolehan, s.pdf_path, b.box_code, b.lokasi as box_lokasi');
         $builder->join('sertifikat_boxes b', 'b.id = s.box_id', 'left');
         $builder->where('s.nibar', $nibar);
         $result = $builder->get()->getRowArray();
@@ -49,13 +49,14 @@ class SertifikatApi extends ResourceController
             'status' => 200,
             'message' => 'Success',
             'data' => [
-                'no_sertipikat' => $result['no_sertipikat'],
-                'nibar'         => $result['nibar'],
-                'nama_pemilik'  => $result['nama_pemilik'],
-                'pdf_url'       => $pdfUrl,
-                'is_archived'   => !empty($result['box_code']),
-                'box_code'      => $result['box_code'] ?? '-',
-                'box_lokasi'    => $result['box_lokasi'] ?? '-'
+                'no_sertipikat'      => $result['no_sertipikat'],
+                'nibar'              => $result['nibar'],
+                'nama_pemilik'       => $result['nama_pemilik'],
+                'tanggal_sertifikat' => $result['tanggal_perolehan'],
+                'pdf_url'            => $pdfUrl,
+                'is_archived'        => !empty($result['box_code']),
+                'box_code'           => $result['box_code'] ?? '-',
+                'box_lokasi'         => $result['box_lokasi'] ?? '-'
             ]
         ]);
     }

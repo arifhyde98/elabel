@@ -26,7 +26,7 @@
     <input type="number" step="0.01" name="luas" id="luas" class="form-control" value="<?= esc((string) (old('luas') ?: ($item['luas'] ?? ''))) ?>">
 </div>
 <div class="form-group">
-    <label for="tanggal_perolehan">Tanggal Perolehan</label>
+    <label for="tanggal_perolehan">Tanggal Sertifikat</label>
     <input type="date" name="tanggal_perolehan" id="tanggal_perolehan" class="form-control" value="<?= esc((string) (old('tanggal_perolehan') ?: ($item['tanggal_perolehan'] ?? ''))) ?>">
 </div>
 <div class="form-group">

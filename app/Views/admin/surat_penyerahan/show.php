@@ -36,7 +36,7 @@
                     <dt class="col-sm-3">Luas</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['luas'] ?? '-')) ?></dd>
 
-                    <dt class="col-sm-3">Tanggal Perolehan</dt>
+                    <dt class="col-sm-3">Tanggal Sertifikat</dt>
                     <dd class="col-sm-9"><?= esc((string) ($item['tanggal_perolehan'] ?? '-')) ?></dd>
 
                     <dt class="col-sm-3">Alamat</dt>

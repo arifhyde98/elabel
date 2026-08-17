@@ -302,7 +302,7 @@
                         </a>
                     </div>
                     <div class="mb-3 small text-muted">
-                        Kolom yang dibaca: `No. Sertipikat`, `NIBAR`, `Status Penggunaan`, `Spesifikasi`, `Luas`, `Tanggal Perolehan`, `Nilai Perolehan`, `Nama Pemilik`, `Cara Perolehan`, `Alamat`, `Lokasi`, `Dinas`.
+                        Kolom yang dibaca: `No. Sertipikat`, `NIBAR`, `Status Penggunaan`, `Spesifikasi`, `Luas`, `Tanggal Sertifikat`, `Nilai Perolehan`, `Nama Pemilik`, `Cara Perolehan`, `Alamat`, `Lokasi`, `Dinas`.
                     </div>
                     <div class="form-group mb-0">
                         <label for="import_file">File Import</label>
